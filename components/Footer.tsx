@@ -1,0 +1,111 @@
+import React from 'react';
+
+export default function Footer() {
+  return (
+    <footer className="w-full bg-[#0E4A3E] text-white py-10 px-4 sm:px-6 lg:px-8 font-sans">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-8 md:gap-16">
+        
+        {/* Left Section: Main Title & Description */}
+        <div className="max-w-xl space-y-3">
+          <div className="space-y-1">
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white uppercase">
+              KULIAH KERJA NYATA INTERNASIONAL
+            </h2>
+            <h3 className="text-xs sm:text-sm font-semibold tracking-wide text-white uppercase">
+              UNIVERSITAS ISLAM NEGERI SIBER SYEKH NURJATI CIREBON
+            </h3>
+          </div>
+
+          <p className="italic text-sm sm:text-base text-gray-100 font-normal leading-relaxed pt-2">
+            Program Kuliah Kerja Nyata (KKN) Internasional UIN Siber Syekh Nurjati Cirebon, hadir sebagai wadah pengabdian mahasiswa di ranah internasional dengan semangat kolaborasi, budaya, dan kebermanfaatan
+          </p>
+        </div>
+
+        {/* Right Section: Contact Information & Copyright */}
+        <div className="flex flex-col space-y-6 min-w-[280px]">
+          <div>
+            <h3 className="text-base font-bold text-white mb-3">
+              Kontak Kami
+            </h3>
+
+            <ul className="space-y-2.5 text-sm text-gray-100">
+              {/* Location */}
+              <li className="flex items-center gap-3">
+                <svg className="w-4 h-4 shrink-0 text-white fill-none stroke-current stroke-2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+                <span>Jalan Perjuangan Kampus Utama</span>
+              </li>
+
+              {/* Email */}
+              <li className="flex items-center gap-3">
+                <svg className="w-4 h-4 shrink-0 text-white fill-none stroke-current stroke-2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                  <rect width="20" height="16" x="2" y="4" rx="2"/>
+                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                </svg>
+                <a 
+                  href="mailto:kknuinsibersyekhnurjaticirebon@gmail.com" 
+                  className="hover:underline transition-all"
+                >
+                  kknuinsibersyekhnurjaticirebon@gmail.com
+                </a>
+              </li>
+
+              {/* Phone */}
+              <li className="flex items-center gap-3">
+                <svg className="w-4 h-4 shrink-0 text-white fill-none stroke-current stroke-2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                </svg>
+                <a 
+                  href="tel:08812345678" 
+                  className="hover:underline transition-all"
+                >
+                  08812345678
+                </a>
+              </li>
+
+              {/* Instagram */}
+              <li className="flex items-center gap-3">
+                <svg className="w-4 h-4 shrink-0 text-white fill-none stroke-current stroke-2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                  <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                  <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+                </svg>
+                <a 
+                  href="https://instagram.com/kknuinssc_" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="hover:underline transition-all"
+                >
+                  kknuinssc_
+                </a>
+              </li>
+
+              {/* Website */}
+              <li className="flex items-center gap-3">
+                <svg className="w-4 h-4 shrink-0 text-white fill-none stroke-current stroke-2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
+                  <path d="M2 12h20"/>
+                </svg>
+                <a 
+                  href="#" 
+                  className="hover:underline transition-all"
+                >
+                  kkninternasionaluinssc
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Copyright notice */}
+          <div className="pt-2 text-xs sm:text-sm text-gray-200">
+            @ 2026 kkn internasional UINSSC
+          </div>
+        </div>
+
+      </div>
+    </footer>
+  );
+}

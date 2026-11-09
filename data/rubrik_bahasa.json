@@ -1,0 +1,86 @@
+{
+  "updated_at": "2026-11-03T23:12:00.000Z",
+  "jenjang_inggris": [
+    {
+      "tingkat": 0,
+      "skor": 0,
+      "predikat": "Belum Terstandarisasi",
+      "toeflLabel": "TOEFL < 311 / Belum Ada",
+      "toeflMin": 0,
+      "toeflMax": 310,
+      "ieltsLabel": "IELTS < 3.5 / Belum Ada",
+      "ieltsMin": 0,
+      "ieltsMax": 3.0,
+      "toeicLabel": "TOEIC < 105 / Belum Ada",
+      "toeicMin": 0,
+      "toeicMax": 100,
+      "indikator": "Belum memiliki sertifikat tes resmi terstandarisasi."
+    },
+    {
+      "tingkat": 1,
+      "skor": 20,
+      "predikat": "Elementary / Novice",
+      "toeflLabel": "TOEFL 311 - 420",
+      "toeflMin": 311,
+      "toeflMax": 420,
+      "ieltsLabel": "IELTS 3.5 - 4.5",
+      "ieltsMin": 3.5,
+      "ieltsMax": 4.5,
+      "toeicLabel": "TOEIC 105 - 400",
+      "toeicMin": 105,
+      "toeicMax": 400,
+      "indikator": "Mampu memahami percakapan umum sederhana."
+    },
+    {
+      "tingkat": 2,
+      "skor": 30,
+      "predikat": "Intermediate",
+      "toeflLabel": "TOEFL 421 - 475",
+      "toeflMin": 421,
+      "toeflMax": 475,
+      "ieltsLabel": "IELTS 5.0 - 5.5",
+      "ieltsMin": 5.0,
+      "ieltsMax": 5.5,
+      "toeicLabel": "TOEIC 405 - 600",
+      "toeicMin": 405,
+      "toeicMax": 600,
+      "indikator": "Mampu berkomunikasi sehari-hari secara wajar."
+    },
+    {
+      "tingkat": 3,
+      "skor": 40,
+      "predikat": "Upper-Intermediate",
+      "toeflLabel": "TOEFL 476 - 525",
+      "toeflMin": 476,
+      "toeflMax": 525,
+      "ieltsLabel": "IELTS 6.0",
+      "ieltsMin": 5.6,
+      "ieltsMax": 6.0,
+      "toeicLabel": "TOEIC 605 - 780",
+      "toeicMin": 605,
+      "toeicMax": 780,
+      "indikator": "Artikulatif, lancar, dan siap mempresentasikan gagasan."
+    },
+    {
+      "tingkat": 4,
+      "skor": 50,
+      "predikat": "Advanced / Fluent",
+      "toeflLabel": "TOEFL ≥ 526",
+      "toeflMin": 526,
+      "toeflMax": 677,
+      "ieltsLabel": "IELTS ≥ 6.5",
+      "ieltsMin": 6.5,
+      "ieltsMax": 9.0,
+      "toeicLabel": "TOEIC ≥ 785",
+      "toeicMin": 785,
+      "toeicMax": 990,
+      "indikator": "Sangat fasih dan memiliki kosakata akademik/profesional internasional unggul."
+    }
+  ],
+  "bonus_arab": {
+    "toafl_min": 400,
+    "skor_tambahan_toafl": 10,
+    "skor_tambahan_lisan": 5
+  }
+}
+

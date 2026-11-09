@@ -1,0 +1,459 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id_user       Int             @id @default(autoincrement())
+  api_id        String?         @db.VarChar(100)
+  nim           String?         @unique(map: "nim") @db.VarChar(30)
+  nama          String          @db.VarChar(150)
+  email         String          @unique(map: "email") @db.VarChar(150)
+  password      String?         @db.VarChar(255)
+  role          users_role
+  status        Boolean         @default(true)
+  created_at    DateTime        @default(now()) @db.DateTime(0)
+  updated_at    DateTime        @default(now()) @db.DateTime(0)
+  hasil_seleksi hasil_seleksi[]
+  informasi     Informasi[]
+  mahasiswa     mahasiswa?
+  pengumuman    pengumuman[]
+  staff         staff?
+  surat         surat[]
+  log_publikasi log_publikasi[]
+
+  @@map("users")
+}
+
+// Log audit riwayat publikasi (timeline, pengumuman, hasil seleksi)
+model log_publikasi {
+  id_log       Int      @id @default(autoincrement())
+  id_user      Int
+  id_periode   Int?
+  jenis        String   @db.VarChar(30) // timeline | pengumuman | hasil_seleksi
+  id_referensi Int?
+  aksi         String   @db.VarChar(20) // Publish | Private
+  keterangan   String?  @db.Text
+  created_at   DateTime @default(now()) @db.DateTime(0)
+  users        User     @relation(fields: [id_user], references: [id_user], onDelete: NoAction, map: "fk_log_publikasi_user")
+
+  @@index([id_user], map: "fk_log_publikasi_user")
+  @@index([id_periode], map: "idx_log_publikasi_periode")
+}
+
+model Informasi {
+  id_informasi Int      @id @default(autoincrement())
+  id_periode   Int?
+  id_user      Int
+  judul        String   @db.VarChar(200)
+  isi          String   @db.Text
+  gambar       String?  @db.VarChar(255)
+  status       Boolean  @default(true)
+  created_at   DateTime @default(now()) @db.DateTime(0)
+  updated_at   DateTime @default(now()) @db.DateTime(0)
+  periode      periode? @relation(fields: [id_periode], references: [id_periode], map: "fk_informasi_periode")
+  users        User     @relation(fields: [id_user], references: [id_user], onDelete: NoAction, map: "fk_informasi_user")
+
+  @@index([id_periode], map: "fk_informasi_periode")
+  @@index([id_user], map: "fk_informasi_user")
+  @@map("informasi")
+}
+
+model dokumen_pendaftaran {
+  id_dokumen         Int                        @id @default(autoincrement())
+  id_pendaftaran     Int
+  id_persyaratan     Int
+  file_path          String                     @db.VarChar(255)
+  status             dokumen_pendaftaran_status @default(Menunggu)
+  uploaded_at        DateTime                   @default(now()) @db.DateTime(0)
+  pendaftaran        pendaftaran                @relation(fields: [id_pendaftaran], references: [id_pendaftaran], onDelete: Cascade, map: "fk_dokumen_pendaftaran")
+  persyaratan        persyaratan                @relation(fields: [id_persyaratan], references: [id_persyaratan], onDelete: NoAction, map: "fk_dokumen_persyaratan")
+  verifikasi_dokumen verifikasi_dokumen[]
+
+  @@index([id_pendaftaran], map: "fk_dokumen_pendaftaran")
+  @@index([id_persyaratan], map: "fk_dokumen_persyaratan")
+}
+
+model fakultas {
+  id_fakultas   Int         @id @default(autoincrement())
+  nama_fakultas String      @db.VarChar(150)
+  status        Boolean     @default(true)
+  mahasiswa     mahasiswa[]
+  prodi         prodi[]
+}
+
+model hasil_seleksi {
+  id_hasil          Int                  @id @default(autoincrement())
+  id_pendaftaran    Int                  @unique(map: "id_pendaftaran")
+  nilai_substansi   Decimal              @db.Decimal(5, 2)
+  nilai_wawancara   Decimal              @db.Decimal(5, 2)
+  bobot_substansi   Decimal              @db.Decimal(5, 2)
+  bobot_wawancara   Decimal              @db.Decimal(5, 2)
+  nilai_akhir       Decimal              @db.Decimal(5, 2)
+  ranking_awal      Int
+  ranking_akhir     Int
+  status            hasil_seleksi_status
+  catatan           String?              @db.Text
+  ditetapkan_oleh   Int
+  tanggal_penetapan DateTime             @default(now()) @db.DateTime(0)
+  pendaftaran       pendaftaran          @relation(fields: [id_pendaftaran], references: [id_pendaftaran], onDelete: NoAction, map: "fk_hasil_seleksi_pendaftaran")
+  users             User                 @relation(fields: [ditetapkan_oleh], references: [id_user], onDelete: NoAction, map: "fk_hasil_seleksi_user")
+
+  @@index([ditetapkan_oleh], map: "fk_hasil_seleksi_user")
+}
+
+model kriteria_seleksi {
+  id_kriteria    Int             @id @default(autoincrement())
+  id_periode     Int
+  nama_kriteria  String          @db.VarChar(150)
+  bobot          Decimal         @db.Decimal(5, 2)
+  nilai_maksimal Decimal         @db.Decimal(5, 2)
+  jenis          String          @db.VarChar(50)
+  metode_nilai   String          @db.VarChar(100)
+  status         Boolean         @default(true)
+  periode        periode         @relation(fields: [id_periode], references: [id_periode], onDelete: Cascade, map: "fk_kriteria_seleksi_periode")
+  nilai_seleksi  nilai_seleksi[]
+
+  @@index([id_periode], map: "fk_kriteria_seleksi_periode")
+}
+
+model kriteria_wawancara {
+  id_kriteria_wawancara Int               @id @default(autoincrement())
+  id_periode            Int
+  nama_kriteria         String            @db.VarChar(150)
+  bobot                 Decimal           @db.Decimal(5, 2)
+  nilai_maksimal        Decimal           @db.Decimal(5, 2)
+  status                Boolean           @default(true)
+  periode               periode           @relation(fields: [id_periode], references: [id_periode], onDelete: Cascade, map: "fk_kriteria_wawancara_periode")
+  nilai_wawancara       nilai_wawancara[]
+
+  @@index([id_periode], map: "fk_kriteria_wawancara_periode")
+}
+
+model mahasiswa {
+  id_mahasiswa Int           @id @default(autoincrement())
+  id_user      Int           @unique(map: "id_user")
+  id_fakultas  Int
+  id_prodi     Int
+  ipk          Decimal       @db.Decimal(3, 2)
+  semester     Int           @db.TinyInt
+  kelas        String        @db.VarChar(30)
+  last_sync    DateTime?     @db.DateTime(0)
+  fakultas     fakultas      @relation(fields: [id_fakultas], references: [id_fakultas], onDelete: NoAction, map: "fk_mahasiswa_fakultas")
+  prodi        prodi         @relation(fields: [id_prodi], references: [id_prodi], onDelete: NoAction, map: "fk_mahasiswa_prodi")
+  users        User          @relation(fields: [id_user], references: [id_user], onDelete: NoAction, map: "fk_mahasiswa_user")
+  pendaftaran  pendaftaran[]
+
+  @@index([id_fakultas], map: "fk_mahasiswa_fakultas")
+  @@index([id_prodi], map: "fk_mahasiswa_prodi")
+}
+
+model negara {
+  id_negara      Int              @id @default(autoincrement())
+  nama_negara    String           @db.VarChar(100)
+  status         Boolean          @default(true)
+  foto           String?          @db.VarChar(255)
+  deskripsi      String?          @db.Text
+  periode_negara periode_negara[]
+}
+
+model nilai_seleksi {
+  id_nilai         Int              @id @default(autoincrement())
+  id_pendaftaran   Int
+  id_kriteria      Int
+  nilai            Decimal          @db.Decimal(5, 2)
+  nilai_bobot      Decimal          @db.Decimal(5, 2)
+  kriteria_seleksi kriteria_seleksi @relation(fields: [id_kriteria], references: [id_kriteria], onDelete: NoAction, map: "fk_nilai_seleksi_kriteria")
+  pendaftaran      pendaftaran      @relation(fields: [id_pendaftaran], references: [id_pendaftaran], onDelete: Cascade, map: "fk_nilai_seleksi_pendaftaran")
+
+  @@index([id_kriteria], map: "fk_nilai_seleksi_kriteria")
+  @@index([id_pendaftaran], map: "fk_nilai_seleksi_pendaftaran")
+}
+
+model nilai_wawancara {
+  id_nilai_wawancara    Int                @id @default(autoincrement())
+  id_wawancara          Int
+  id_kriteria_wawancara Int
+  nilai                 Decimal            @db.Decimal(5, 2)
+  catatan               String?            @db.Text
+  wawancara             wawancara          @relation(fields: [id_wawancara], references: [id_wawancara], onDelete: Cascade, map: "fk_nilai_wawancara")
+  kriteria_wawancara    kriteria_wawancara @relation(fields: [id_kriteria_wawancara], references: [id_kriteria_wawancara], onDelete: NoAction, map: "fk_nilai_wawancara_kriteria")
+
+  @@index([id_wawancara], map: "fk_nilai_wawancara")
+  @@index([id_kriteria_wawancara], map: "fk_nilai_wawancara_kriteria")
+}
+
+model orang_tua {
+  id_orang_tua     Int         @id @default(autoincrement())
+  id_pendaftaran   Int         @unique(map: "id_pendaftaran")
+  nama_ayah        String      @db.VarChar(150)
+  pekerjaan_ayah   String      @db.VarChar(100)
+  nama_ibu         String      @db.VarChar(150)
+  pekerjaan_ibu    String      @db.VarChar(100)
+  alamat_orang_tua String      @db.Text
+  no_hp_orang_tua  String      @db.VarChar(20)
+  pendaftaran      pendaftaran @relation(fields: [id_pendaftaran], references: [id_pendaftaran], onDelete: Cascade, map: "fk_orang_tua_pendaftaran")
+}
+
+model pendaftaran {
+  id_pendaftaran      Int                            @id @default(autoincrement())
+  id_mahasiswa        Int
+  id_periode          Int
+  id_periode_negara   Int
+  jenis_kelamin       pendaftaran_jenis_kelamin
+  no_hp               String                         @db.VarChar(20)
+  alamat              String                         @db.Text
+  tempat_lahir        String                         @db.VarChar(100)
+  tanggal_lahir       DateTime                       @db.Date
+  asal_sekolah        String                         @db.VarChar(150)
+  total_sks           Int
+  ipk                 Decimal                        @db.Decimal(3, 2)
+  deskripsi_diri      String                         @db.Text
+  golongan_darah      String                         @db.VarChar(3)
+  riwayat_penyakit    String?                        @db.Text
+  alergi              String?                        @db.Text
+  ukuran_kaos         String                         @db.VarChar(10)
+  tanggal_daftar      DateTime                       @default(now()) @db.DateTime(0)
+  status_pendaftaran  pendaftaran_status_pendaftaran @default(Draft)
+  catatan             String?                        @db.Text
+  created_at          DateTime                       @default(now()) @db.DateTime(0)
+  updated_at          DateTime                       @default(now()) @db.DateTime(0)
+  dokumen_pendaftaran dokumen_pendaftaran[]
+  hasil_seleksi       hasil_seleksi?
+  nilai_seleksi       nilai_seleksi[]
+  orang_tua           orang_tua?
+  mahasiswa           mahasiswa                      @relation(fields: [id_mahasiswa], references: [id_mahasiswa], onDelete: NoAction, map: "fk_pendaftaran_mahasiswa")
+  periode             periode                        @relation(fields: [id_periode], references: [id_periode], onDelete: NoAction, map: "fk_pendaftaran_periode")
+  periode_negara      periode_negara                 @relation(fields: [id_periode_negara], references: [id_periode_negara], onDelete: NoAction, map: "fk_pendaftaran_periode_negara")
+  surat               surat[]
+  wawancara           wawancara[]
+
+  @@index([id_mahasiswa], map: "fk_pendaftaran_mahasiswa")
+  @@index([id_periode], map: "fk_pendaftaran_periode")
+  @@index([id_periode_negara], map: "fk_pendaftaran_periode_negara")
+}
+
+model pengumuman {
+  id_pengumuman   Int      @id @default(autoincrement())
+  id_periode      Int
+  id_user         Int
+  judul           String   @db.VarChar(200)
+  isi             String   @db.Text
+  tanggal_publish DateTime @default(now()) @db.DateTime(0)
+  status          Boolean  @default(true)
+  created_at      DateTime @default(now()) @db.DateTime(0)
+  periode         periode  @relation(fields: [id_periode], references: [id_periode], onDelete: NoAction, map: "fk_pengumuman_periode")
+  users           User     @relation(fields: [id_user], references: [id_user], onDelete: NoAction, map: "fk_pengumuman_user")
+
+  @@index([id_periode], map: "fk_pengumuman_periode")
+  @@index([id_user], map: "fk_pengumuman_user")
+}
+
+model periode {
+  id_periode         Int                  @id @default(autoincrement())
+  nama_periode       String               @db.VarChar(150)
+  tahun              Int                  @db.Year
+  tanggal_mulai      DateTime             @db.Date
+  tanggal_selesai    DateTime             @db.Date
+  kuota              Int
+  status             periode_status       @default(Aktif)
+  // Publikasi resmi hasil seleksi (sekali publish → hasil terkunci permanen)
+  hasil_dipublikasi       Boolean          @default(false)
+  tanggal_publikasi_hasil DateTime?        @db.DateTime(0)
+  dipublikasi_oleh        Int?
+  created_at         DateTime             @default(now()) @db.DateTime(0)
+  informasi          Informasi[]
+  kriteria_seleksi   kriteria_seleksi[]
+  kriteria_wawancara kriteria_wawancara[]
+  pendaftaran        pendaftaran[]
+  pengumuman         pengumuman[]
+  periode_negara     periode_negara[]
+  persyaratan        persyaratan[]
+  surat              surat[]
+  timeline           timeline[]
+}
+
+model periode_negara {
+  id_periode_negara Int           @id @default(autoincrement())
+  id_periode        Int
+  id_negara         Int
+  status            Boolean       @default(true)
+  pendaftaran       pendaftaran[]
+  negara            negara        @relation(fields: [id_negara], references: [id_negara], onDelete: NoAction, map: "fk_periode_negara_negara")
+  periode           periode       @relation(fields: [id_periode], references: [id_periode], onDelete: Cascade, map: "fk_periode_negara_periode")
+
+  @@index([id_negara], map: "fk_periode_negara_negara")
+  @@index([id_periode], map: "fk_periode_negara_periode")
+}
+
+model persyaratan {
+  id_persyaratan      Int                   @id @default(autoincrement())
+  id_periode          Int
+  nama_persyaratan    String                @db.VarChar(150)
+  deskripsi           String                @db.Text
+  format_file         String                @db.VarChar(100)
+  ukuran_maksimal     Int
+  wajib               Boolean               @default(true)
+  status              Boolean               @default(true)
+  dokumen_pendaftaran dokumen_pendaftaran[]
+  periode             periode               @relation(fields: [id_periode], references: [id_periode], onDelete: Cascade, map: "fk_persyaratan_periode")
+
+  @@index([id_periode], map: "fk_persyaratan_periode")
+}
+
+model prodi {
+  id_prodi    Int         @id @default(autoincrement())
+  id_fakultas Int
+  nama_prodi  String      @db.VarChar(150)
+  status      Boolean     @default(true)
+  mahasiswa   mahasiswa[]
+  fakultas    fakultas    @relation(fields: [id_fakultas], references: [id_fakultas], onDelete: NoAction, map: "fk_prodi_fakultas")
+
+  @@index([id_fakultas], map: "fk_prodi_fakultas")
+}
+
+model staff {
+  id_staff           Int                  @id @default(autoincrement())
+  id_user            Int                  @unique(map: "id_user")
+  nip                String               @unique(map: "nip") @db.VarChar(30)
+  no_hp              String               @db.VarChar(20)
+  status             Boolean              @default(true)
+  users              User                 @relation(fields: [id_user], references: [id_user], onDelete: NoAction, map: "fk_staff_user")
+  verifikasi_dokumen verifikasi_dokumen[]
+  wawancara          wawancara[]
+}
+
+model surat {
+  id_surat       Int          @id @default(autoincrement())
+  id_periode     Int?
+  id_pendaftaran Int?
+  id_user        Int
+  nama_surat     String       @db.VarChar(150)
+  file_path      String       @db.VarChar(255)
+  tanggal_upload DateTime     @default(now()) @db.DateTime(0)
+  status         Boolean      @default(true)
+  pendaftaran    pendaftaran? @relation(fields: [id_pendaftaran], references: [id_pendaftaran], map: "fk_surat_pendaftaran")
+  periode        periode?     @relation(fields: [id_periode], references: [id_periode], onDelete: NoAction, map: "fk_surat_periode")
+  users          User         @relation(fields: [id_user], references: [id_user], onDelete: NoAction, map: "fk_surat_user")
+
+  @@index([id_pendaftaran], map: "fk_surat_pendaftaran")
+  @@index([id_periode], map: "fk_surat_periode")
+  @@index([id_user], map: "fk_surat_user")
+}
+
+model timeline {
+  id_timeline     Int      @id @default(autoincrement())
+  id_periode      Int
+  nama_tahapan    String   @db.VarChar(150)
+  tanggal_mulai   DateTime @db.Date
+  tanggal_selesai DateTime @db.Date
+  urutan          Int
+  deskripsi       String   @db.Text
+  status          Boolean  @default(true)
+  is_pelaksanaan  Boolean  @default(false)
+  is_pengumuman   Boolean  @default(false)
+  periode         periode  @relation(fields: [id_periode], references: [id_periode], onDelete: Cascade, map: "fk_timeline_periode")
+
+  @@index([id_periode], map: "fk_timeline_periode")
+}
+
+model verifikasi_dokumen {
+  id_verifikasi       Int                       @id @default(autoincrement())
+  id_dokumen          Int
+  id_staff            Int
+  status              verifikasi_dokumen_status
+  catatan             String?                   @db.Text
+  tanggal_verifikasi  DateTime                  @default(now()) @db.DateTime(0)
+  dokumen_pendaftaran dokumen_pendaftaran       @relation(fields: [id_dokumen], references: [id_dokumen], onDelete: Cascade, map: "fk_verifikasi_dokumen")
+  staff               staff                     @relation(fields: [id_staff], references: [id_staff], onDelete: NoAction, map: "fk_verifikasi_staff")
+
+  @@index([id_dokumen], map: "fk_verifikasi_dokumen")
+  @@index([id_staff], map: "fk_verifikasi_staff")
+}
+
+model wawancara {
+  id_wawancara      Int               @id @default(autoincrement())
+  id_pendaftaran    Int
+  id_staff          Int
+  tanggal_wawancara DateTime          @db.DateTime(0)
+  catatan           String?           @db.Text
+  status            wawancara_status  @default(Terjadwal)
+  nilai_wawancara   nilai_wawancara[]
+  pendaftaran       pendaftaran       @relation(fields: [id_pendaftaran], references: [id_pendaftaran], onDelete: Cascade, map: "fk_wawancara_pendaftaran")
+  staff             staff             @relation(fields: [id_staff], references: [id_staff], onDelete: NoAction, map: "fk_wawancara_staff")
+
+  @@index([id_pendaftaran], map: "fk_wawancara_pendaftaran")
+  @@index([id_staff], map: "fk_wawancara_staff")
+}
+
+model persyaratan_akademik {
+  id_akademik       Int      @id @default(autoincrement())
+  min_ipk           Decimal  @default(3.50) @db.Decimal(3, 2)
+  min_semester      Int      @default(6)
+  max_semester      Int      @default(8)
+  min_sks           Int      @default(100)
+  all_prodi         Boolean  @default(true)
+  allowed_prodi_ids String?  @db.Text
+  status            Boolean  @default(true)
+  catatan           String?  @db.Text
+  created_at        DateTime @default(now()) @db.DateTime(0)
+  updated_at        DateTime @default(now()) @db.DateTime(0)
+
+  @@map("persyaratan_akademik")
+}
+
+enum verifikasi_dokumen_status {
+  Valid
+  Revisi
+  Ditolak
+}
+
+enum dokumen_pendaftaran_status {
+  Menunggu
+  Valid
+  Revisi
+  Ditolak
+}
+
+enum pendaftaran_jenis_kelamin {
+  L
+  P
+}
+
+enum wawancara_status {
+  Terjadwal
+  Selesai
+  Batal
+}
+
+enum periode_status {
+  Aktif
+  Belum_Aktif @map("Belum Aktif")
+  Selesai
+}
+
+enum users_role {
+  mahasiswa
+  staff
+  admin
+}
+
+enum hasil_seleksi_status {
+  Lolos
+  Tidak_Lolos @map("Tidak Lolos")
+  Cadangan
+}
+
+enum pendaftaran_status_pendaftaran {
+  Draft
+  Menunggu_Verifikasi @map("Menunggu Verifikasi")
+  Perbaikan_Dokumen   @map("Perbaikan Dokumen")
+  Verifikasi_Dokumen  @map("Verifikasi Dokumen")
+  Wawancara
+  Lolos
+  Tidak_Lolos         @map("Tidak Lolos")
+}

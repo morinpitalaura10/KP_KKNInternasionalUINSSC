@@ -1,0 +1,15 @@
+{
+  "id_akademik": 1,
+  "min_ipk": 3.5,
+  "min_semester": 6,
+  "max_semester": 7,
+  "min_sks": 120,
+  "all_prodi": false,
+  "allowed_prodi_ids": [
+    9,
+    8
+  ],
+  "status": true,
+  "catatan": "Wajib berstatus Mahasiswa Aktif, minimal semester 6, IPK minimal 3.50, dan terdaftar pada program studi yang dibuka untuk periode KKN Internasional saat ini.",
+  "updated_at": "2026-11-08T17:20:29.210Z"
+}
