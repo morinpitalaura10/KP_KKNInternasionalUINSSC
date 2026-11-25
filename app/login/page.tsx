@@ -384,7 +384,7 @@ export default function LoginPage() {
             )}
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className={`space-y-3.5 max-w-sm mx-auto w-full transition-all ${isShaking ? 'animate-shake' : ''}`}>
+            <form onSubmit={handleSubmit} suppressHydrationWarning className={`space-y-3.5 max-w-sm mx-auto w-full transition-all ${isShaking ? 'animate-shake' : ''}`}>
               
               {/* Field 1: Username / NIM */}
               <div>
@@ -398,6 +398,7 @@ export default function LoginPage() {
                 </div>
                 <input
                   type="text"
+                  suppressHydrationWarning
                   disabled={isLoading || lockoutSeconds > 0}
                   value={username}
                   onChange={(e) => {
@@ -424,6 +425,7 @@ export default function LoginPage() {
                 <div className="relative">
                   <input
                     type={showPassword ? 'text' : 'password'}
+                    suppressHydrationWarning
                     disabled={isLoading || lockoutSeconds > 0}
                     value={password}
                     onChange={(e) => {
@@ -442,6 +444,7 @@ export default function LoginPage() {
                   />
                   <button
                     type="button"
+                    suppressHydrationWarning
                     disabled={lockoutSeconds > 0}
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none transition-colors cursor-pointer disabled:opacity-40"
@@ -466,6 +469,7 @@ export default function LoginPage() {
               <div className="pt-2 text-center">
                 <button
                   type="submit"
+                  suppressHydrationWarning
                   disabled={isLoading || lockoutSeconds > 0}
                   className="w-auto px-10 py-2.5 bg-[#0E4A3E] hover:bg-[#0a382f] text-white font-extrabold text-xs sm:text-sm rounded-full shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer inline-flex items-center justify-center gap-1.5"
                 >

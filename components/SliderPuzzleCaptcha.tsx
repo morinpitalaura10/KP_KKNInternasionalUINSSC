@@ -295,6 +295,7 @@ export default function SliderPuzzleCaptcha({
         </span>
         <button
           type="button"
+          suppressHydrationWarning
           onClick={handleRefresh}
           title={status === 'success' ? 'Verifikasi Ulang' : 'Ganti Gambar Puzzle'}
           className="text-slate-400 hover:text-slate-600 transition-colors p-0.5 rounded cursor-pointer"
