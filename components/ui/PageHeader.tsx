@@ -1,10 +1,17 @@
-import React from 'react';
+'use client';
 
-interface PageHeaderProps {
-  title: string;
-  subtitle?: string;
-  description?: string;
+import React from 'react';
+import HeroBanner from './HeroBanner';
+import { ShieldCheck } from 'lucide-react';
+
+export interface PageHeaderProps {
+  title: React.ReactNode;
+  subtitle?: React.ReactNode;
+  description?: React.ReactNode;
   action?: React.ReactNode;
+  aside?: React.ReactNode;
+  badgeIcon?: React.ReactNode;
+  badgeText?: React.ReactNode;
   className?: string;
 }
 
@@ -13,27 +20,30 @@ export default function PageHeader({
   subtitle,
   description,
   action,
+  aside,
+  badgeIcon,
+  badgeText,
   className = '',
 }: PageHeaderProps) {
-  return (
-    <div className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 ${className}`}>
-      <div className="min-w-0">
-        <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-[#0E4A3E] tracking-tight leading-tight uppercase font-archivo sm:whitespace-nowrap">
-          {title}
-        </h1>
-        {subtitle && (
-          <h2 className="text-xs sm:text-sm lg:text-base font-bold text-[#0E4A3E]/80 tracking-wide uppercase font-archivo mt-0.5 sm:whitespace-nowrap">
-            {subtitle}
-          </h2>
-        )}
-        {description && (
-          <p className="text-xs sm:text-sm font-medium text-slate-500 mt-1">
-            {description}
-          </p>
-        )}
-      </div>
+  const resolvedBadgeText =
+    badgeText ||
+    (typeof subtitle === 'string' && subtitle.length > 0 && subtitle.length < 50
+      ? subtitle
+      : 'Portal Administrator LP2M');
 
-      {action && <div className="shrink-0 flex items-center gap-2.5">{action}</div>}
-    </div>
+  const resolvedDesc =
+    description ||
+    (typeof subtitle === 'string' && subtitle.length >= 50 ? subtitle : undefined);
+
+  return (
+    <HeroBanner
+      badgeIcon={badgeIcon || <ShieldCheck className="w-3.5 h-3.5 text-[#C0E6D8]" />}
+      badgeText={resolvedBadgeText}
+      title={title}
+      description={resolvedDesc}
+      aside={aside}
+      action={action}
+      className={className}
+    />
   );
 }

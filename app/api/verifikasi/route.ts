@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { checkTimelineWindow } from '@/lib/timelineGuard';
 
 // Helper to map single document item (flat mode)
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -242,12 +243,17 @@ export async function GET(req: NextRequest) {
       });
 
       const mappedList = pendaftaranList.map(mapMahasiswaVerifikasiItem);
+      const targetPeriodeId = activePeriode?.id_periode || (idPeriode && idPeriode !== 'all' ? parseInt(idPeriode, 10) : null);
+      const timelineGuard = targetPeriodeId
+        ? await checkTimelineWindow(targetPeriodeId, 'verifikasi')
+        : { isOpen: true, status: 'TIDAK_DITEMUKAN' };
 
       return NextResponse.json({
         success: true,
         mode: 'grouped',
         data: mappedList,
         activePeriode: activePeriode || null,
+        timelineGuard,
         pagination: {
           page,
           limit,
@@ -347,6 +353,21 @@ export async function PUT(req: NextRequest) {
         return NextResponse.json({ success: false, message: 'ID Pendaftaran tidak valid!' }, { status: 400 });
       }
 
+      // Timeline Guard: Pastikan tahapan verifikasi sudah dibuka
+      const pendaftaranRec = await prisma.pendaftaran.findUnique({
+        where: { id_pendaftaran: pendaftaranId },
+        select: { id_periode: true },
+      });
+      if (pendaftaranRec?.id_periode) {
+        const guard = await checkTimelineWindow(pendaftaranRec.id_periode, 'verifikasi');
+        if (!guard.isOpen) {
+          return NextResponse.json(
+            { success: false, message: guard.message || 'Tahapan verifikasi berkas belum dibuka!' },
+            { status: 403 }
+          );
+        }
+      }
+
       for (const item of dokumen) {
         const docId = parseInt(String(item.id_dokumen), 10);
         if (!docId || isNaN(docId)) continue;
@@ -427,6 +448,17 @@ export async function PUT(req: NextRequest) {
 
     if (!existingDoc) {
       return NextResponse.json({ success: false, message: 'Dokumen tidak ditemukan' }, { status: 404 });
+    }
+
+    // Timeline Guard: Pastikan tahapan verifikasi sudah dibuka
+    if (existingDoc.pendaftaran?.id_periode) {
+      const guard = await checkTimelineWindow(existingDoc.pendaftaran.id_periode, 'verifikasi');
+      if (!guard.isOpen) {
+        return NextResponse.json(
+          { success: false, message: guard.message || 'Tahapan verifikasi berkas belum dibuka!' },
+          { status: 403 }
+        );
+      }
     }
 
     let dbDocStatus: 'Valid' | 'Revisi' | 'Menunggu' = 'Menunggu';

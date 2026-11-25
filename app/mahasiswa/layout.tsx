@@ -24,7 +24,6 @@ export default function MahasiswaLayout({ children }: { children: React.ReactNod
         }
       }
 
-      // Cegah tombol Back browser keluar ke /login saat user sedang aktif di dashboard
       const handlePopState = () => {
         if (window.location.pathname === '/login') {
           window.history.forward();
@@ -39,15 +38,11 @@ export default function MahasiswaLayout({ children }: { children: React.ReactNod
 
   return (
     <AuthGuard allowedRoles={['mahasiswa']}>
-      <div className="h-screen max-h-screen flex flex-col bg-slate-50 font-sans overflow-hidden print:h-auto print:max-h-none print:overflow-visible print:bg-white print:block">
-        <div className="print:hidden">
-          <HeaderMhs onToggleSidebar={handleToggle} isSidebarOpen={sidebarOpen} />
-        </div>
+      <div className="fixed inset-0 h-dvh max-h-dvh w-full flex flex-col bg-slate-50 font-sans overflow-hidden pt-[52px] sm:pt-[60px] print:static print:h-auto print:max-h-none print:overflow-visible print:bg-white print:block print:pt-0">
+        <HeaderMhs onToggleSidebar={handleToggle} isSidebarOpen={sidebarOpen} />
         <div className="flex flex-1 overflow-hidden relative min-h-0 print:block print:overflow-visible print:h-auto">
-          <div className="print:hidden">
-            <SidebarMhs user={user} isOpen={sidebarOpen} onToggle={handleToggle} />
-          </div>
-          <main className="flex-1 overflow-y-auto transition-all duration-300 ease-in-out p-4 sm:p-6 lg:p-8 print:p-0 print:m-0 print:overflow-visible print:block print:w-full print:max-w-none">
+          <SidebarMhs user={user} isOpen={sidebarOpen} onToggle={handleToggle} />
+          <main className="flex-1 overflow-y-auto overscroll-contain transition-all duration-300 ease-in-out p-4 sm:p-6 lg:p-8 print:p-0 print:m-0 print:overflow-visible print:block print:w-full print:max-w-none">
             <div className="w-full max-w-7xl mx-auto print:max-w-none print:w-full">
               {children}
             </div>

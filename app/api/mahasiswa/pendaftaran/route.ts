@@ -134,6 +134,17 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    if (activePeriode.hasil_dipublikasi) {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            'Formulir pendaftaran telah dikunci karena hasil seleksi periode ini sudah resmi dipublikasikan oleh Admin LP2M.',
+        },
+        { status: 403 }
+      );
+    }
+
     const uploadStage =
       activePeriode.timeline.find(
         (t) => /pendaftaran|unggah|berkas|dokumen/i.test(t.nama_tahapan) || t.urutan === 1

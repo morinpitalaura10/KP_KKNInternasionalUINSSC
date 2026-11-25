@@ -132,7 +132,10 @@ export async function GET(req: NextRequest) {
         });
       };
 
-      if (startStr && todayStr < startStr) {
+      if (activePeriode.hasil_dipublikasi) {
+        isUploadWindowOpen = false;
+        uploadWindowMessage = `Hasil seleksi untuk periode "${activePeriode.nama_periode} (${activePeriode.tahun})" telah resmi dipublikasikan oleh Admin LP2M. Formulir pendaftaran dan pengunggahan berkas telah dikunci secara permanen dan tidak dapat diedit kembali.`;
+      } else if (startStr && todayStr < startStr) {
         isUploadWindowOpen = false;
         uploadWindowMessage = `Jadwal "${stageName}" belum dibuka. Pengiriman dokumen dan pendaftaran baru dapat dilakukan pada ${fmtDate(startStr)} s.d. ${fmtDate(endStr)}.`;
       } else if (endStr && todayStr > endStr) {
@@ -159,6 +162,7 @@ export async function GET(req: NextRequest) {
       data: {
         isRegistrationOpen,
         isUploadWindowOpen,
+        isHasilPublished: Boolean(activePeriode?.hasil_dipublikasi),
         closedMessage,
         uploadWindowMessage,
         uploadTimelineInfo,

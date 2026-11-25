@@ -45,3 +45,12 @@ export * from './TableCard';
 
 export { default as TimelineStepper } from './TimelineStepper';
 export * from './TimelineStepper';
+
+export { default as HeroBanner, HeroAsideCard } from './HeroBanner';
+export * from './HeroBanner';
+
+export { default as SearchFilterBar } from './SearchFilterBar';
+export * from './SearchFilterBar';
+
+export { default as ResponsiveTableCard } from './ResponsiveTableCard';
+export * from './ResponsiveTableCard';

@@ -76,48 +76,101 @@ export async function GET(req: NextRequest) {
       prisma.pengumuman.count({ where: { status: true } }),
     ]);
 
-    // 3. Pipeline Tahapan Pendaftaran (sesuai alur status pendaftaran di DB)
+    // 3. Pipeline Tahapan Pendaftaran (dikombinasikan dengan jadwal timeline & status pendaftar)
     // Stage 1: Pendaftaran (Seluruh berkas masuk: total)
     // Stage 2: Verifikasi Dokumen (Yang sudah submit berkas & diverifikasi)
-    // Stage 3: Seleksi (Yang sudah lolos verifikasi administrasi & masuk penilaian)
+    // Stage 3: Seleksi (Yang lolos verifikasi administrasi & masuk penilaian)
     // Stage 4: Wawancara (Yang masuk sesi wawancara)
-    // Stage 5: Pengumuman (Yang telah ditetapkan hasil akhir: Lolos / Tidak Lolos)
+    // Stage 5: Pengumuman (Yang dinyatakan Lolos Seleksi Akhir / Diterima)
     const stage1Count = totalPendaftaran;
     const stage2Count = menungguVerifikasi + perluPerbaikan + verifikasiDokumen + wawancaraCount + lolosSeleksi + tidakLolos;
     const stage3Count = verifikasiDokumen + wawancaraCount + lolosSeleksi;
     const stage4Count = wawancaraCount + lolosSeleksi;
-    const stage5Count = lolosSeleksi + tidakLolos;
+    const stage5Count = lolosSeleksi;
+
+    // Ambil jadwal timeline untuk periode ini agar tahapan tidak loncat sebelum tanggalnya tiba
+    const timelines = id_periode
+      ? await prisma.timeline.findMany({
+          where: { id_periode },
+          orderBy: { urutan: 'asc' },
+        })
+      : [];
+
+    const now = new Date();
+    const todayStr = now.toISOString().split('T')[0];
+
+    const getStageTimeline = (type: string) => {
+      if (!timelines || timelines.length === 0) return null;
+      if (type === 'pendaftaran') {
+        return timelines.find((t) => /pendaftaran|unggah|berkas/i.test(t.nama_tahapan)) || timelines[0];
+      }
+      if (type === 'verifikasi') {
+        return (
+          timelines.find((t) => /verifikasi|administrasi/i.test(t.nama_tahapan)) ||
+          timelines.find((t) => t.urutan === 2)
+        );
+      }
+      if (type === 'seleksi') {
+        return (
+          timelines.find((t) => /seleksi|tes|bahasa/i.test(t.nama_tahapan)) ||
+          timelines.find((t) => t.urutan === 3)
+        );
+      }
+      if (type === 'wawancara') {
+        return (
+          timelines.find((t) => /wawancara|interview/i.test(t.nama_tahapan)) ||
+          timelines.find((t) => t.urutan === 4)
+        );
+      }
+      if (type === 'pengumuman') {
+        return (
+          timelines.find((t) => t.is_pengumuman || /pengumuman|kelulusan/i.test(t.nama_tahapan)) ||
+          timelines.find((t) => t.urutan === 5)
+        );
+      }
+      return null;
+    };
+
+    const isStageTimelineStarted = (type: string) => {
+      if (activePeriode && activePeriode.status === 'Belum_Aktif') {
+        return false;
+      }
+      const t = getStageTimeline(type);
+      if (!t) return false;
+      const startStr = new Date(t.tanggal_mulai).toISOString().split('T')[0];
+      return todayStr >= startStr;
+    };
 
     const tahapan = [
       {
         id: 1,
         nama: 'Pendaftaran',
         count: stage1Count,
-        isActive: stage1Count > 0,
+        isActive: stage1Count > 0 && isStageTimelineStarted('pendaftaran'),
       },
       {
         id: 2,
         nama: 'Verifikasi Dokumen',
         count: stage2Count,
-        isActive: stage2Count > 0,
+        isActive: isStageTimelineStarted('verifikasi') && stage2Count > 0,
       },
       {
         id: 3,
         nama: 'Seleksi',
         count: stage3Count,
-        isActive: stage3Count > 0,
+        isActive: isStageTimelineStarted('seleksi') && stage3Count > 0,
       },
       {
         id: 4,
         nama: 'Wawancara',
         count: stage4Count,
-        isActive: stage4Count > 0,
+        isActive: isStageTimelineStarted('wawancara') && stage4Count > 0,
       },
       {
         id: 5,
         nama: 'Pengumuman',
         count: stage5Count,
-        isActive: stage5Count > 0,
+        isActive: isStageTimelineStarted('pengumuman') && stage5Count > 0,
       },
     ];
 
@@ -162,7 +215,6 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    const now = new Date();
     const isOngoing = activePeriode
       ? activePeriode.status === 'Aktif' || (now >= activePeriode.tanggal_mulai && now <= activePeriode.tanggal_selesai)
       : false;

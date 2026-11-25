@@ -229,18 +229,18 @@ export default function LoginPage() {
     <div className="h-screen w-full flex flex-col justify-between bg-gray-100 font-sans overflow-y-auto lg:overflow-hidden">
       
       {/* Main Split Layout Container */}
-      <div className="flex-1 w-full max-w-6xl mx-auto px-4 py-1.5 sm:py-2 flex items-center justify-center">
-        <div className="w-full min-h-[630px] lg:min-h-[650px] bg-white rounded-2xl sm:rounded-3xl shadow-xl overflow-hidden grid grid-cols-1 md:grid-cols-2 border border-gray-200 relative">
+      <div className="flex-1 w-full max-w-6xl mx-auto px-3 sm:px-4 py-2 sm:py-4 flex items-center justify-center">
+        <div className="w-full min-h-0 sm:min-h-[600px] lg:min-h-[650px] bg-white rounded-2xl sm:rounded-3xl shadow-xl overflow-hidden grid grid-cols-1 md:grid-cols-2 border border-gray-200 relative my-auto">
           
           {/* ================= LEFT SIDE: GREEN HERO CARD ================= */}
-          <div className="bg-[#568E7D] text-white p-8 sm:p-10 lg:p-12 flex flex-col items-center justify-center text-center relative overflow-hidden">
+          <div className="bg-[#568E7D] text-white p-5 sm:p-10 lg:p-12 flex flex-col items-center justify-center text-center relative overflow-hidden">
             {/* Soft decorative background circles */}
             <div className="absolute -top-16 -left-16 w-64 h-64 bg-white/5 rounded-full blur-2xl pointer-events-none" />
             <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-black/10 rounded-full blur-2xl pointer-events-none" />
 
             <div className="relative z-10 flex flex-col items-center max-w-sm">
               {/* UINSSC Logo */}
-              <div className="relative w-32 h-32 sm:w-40 sm:h-40 mb-5 drop-shadow-md">
+              <div className="relative w-16 h-16 sm:w-36 sm:h-36 mb-2.5 sm:mb-5 drop-shadow-md">
                 <Image
                   src="/uinssc.png"
                   alt="Logo UINSSC"
@@ -252,22 +252,22 @@ export default function LoginPage() {
               </div>
 
               {/* Title Header */}
-              <h1 className="text-lg sm:text-xl md:text-2xl font-extrabold tracking-wide uppercase leading-snug text-white font-sans">
+              <h1 className="text-sm sm:text-xl md:text-2xl font-extrabold tracking-wide uppercase leading-snug text-white font-sans">
                 KULIAH KERJA NYATA INTERNASIONAL
               </h1>
 
               {/* Blue Highlight Line Accent */}
-              <div className="w-36 sm:w-48 h-1 bg-[#42A5F5] rounded-full my-4 shadow-sm" />
+              <div className="w-24 sm:w-48 h-1 bg-[#42A5F5] rounded-full my-2 sm:my-4 shadow-sm" />
 
               {/* Subtitle */}
-              <p className="text-xs sm:text-sm font-bold tracking-wider uppercase text-white/90 leading-relaxed max-w-xs">
+              <p className="text-[10px] sm:text-sm font-bold tracking-wider uppercase text-white/90 leading-relaxed max-w-xs hidden sm:block">
                 UNIVERSITAS ISLAM NEGERI SIBER SYEKH NURJATI CIREBON
               </p>
             </div>
           </div>
 
           {/* ================= RIGHT SIDE: FORM LOGIN ================= */}
-          <div className="px-6 py-7 sm:px-10 sm:py-8 flex flex-col justify-center bg-white">
+          <div className="px-5 py-6 sm:px-10 sm:py-8 flex flex-col justify-center bg-white">
             
 
             {/* Login Heading */}

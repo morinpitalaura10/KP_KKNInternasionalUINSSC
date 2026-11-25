@@ -103,18 +103,18 @@ export default function SidebarMhs({ user, isOpen = true, onToggle }: SidebarMhs
       {/* ====== MOBILE: Backdrop overlay ====== */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm md:hidden"
+          className="fixed inset-0 top-[52px] sm:top-[60px] md:top-0 z-30 bg-black/40 backdrop-blur-xs md:hidden print:hidden"
           onClick={handleToggleClick}
         />
       )}
 
       {/* ====== SIDEBAR CONTAINER ====== */}
-      <div className="relative shrink-0 flex h-full">
+      <div className="relative z-40 shrink-0 flex h-full print:hidden">
         <aside
           className={`
-            fixed top-[60px] md:top-0 left-0 z-40 h-[calc(100dvh-60px)] md:h-full bg-[#0E4A3E] flex flex-col shadow-2xl md:shadow-lg
-            transition-all duration-300 ease-in-out select-none
-            md:relative md:z-auto
+            fixed top-[52px] sm:top-[60px] md:top-0 left-0 z-40 h-[calc(100dvh-52px)] sm:h-[calc(100dvh-60px)] md:h-full bg-[#0E4A3E] flex flex-col shadow-2xl md:shadow-lg
+            transition-all duration-300 ease-in-out select-none pointer-events-auto
+            md:relative
             ${isOpen ? 'translate-x-0 w-60 sm:w-64' : '-translate-x-full md:translate-x-0 md:w-0 md:overflow-hidden'}
           `}
         >

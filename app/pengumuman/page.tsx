@@ -2,10 +2,9 @@ import React from 'react';
 import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import SectionTitle from '@/components/SectionTitle';
 import AnnouncementCard from '@/components/AnnouncementCard';
 import { prisma } from '@/lib/prisma';
-import { BellRing, Calendar, FileText, ArrowRight, Sparkles } from 'lucide-react';
+import { Megaphone, Calendar, FileText, ArrowRight, Sparkles, AlertCircle } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -63,9 +62,9 @@ export default async function PengumumanPage() {
         month: monthNames[d.getMonth()] || 'Jan',
         year: String(d.getFullYear()),
         title: item.judul,
-        summary: item.isi.substring(0, 150) + (item.isi.length > 150 ? '...' : ''),
+        summary: item.isi.substring(0, 160) + (item.isi.length > 160 ? '...' : ''),
         dateStr: d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
-        authorStr: item.users?.nama || 'LP2M',
+        authorStr: item.users?.nama || 'Panitia LP2M',
         fullContent: item.isi,
       };
     });
@@ -74,119 +73,126 @@ export default async function PengumumanPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-white font-sans">
+    <div className="min-h-screen flex flex-col bg-white font-sans scroll-smooth">
+      {/* Top Header Bar */}
       <Header />
 
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
-        <SectionTitle
-          prefixTitle="PENGUMUMAN TERBARU"
-          description="Perhatikan jadwal dan tahapan berikut agar tidak terlewat."
-        />
-
-        {/* Badge Penanda Periode Aktif */}
-        {periodeInfo && (
-          <div className="mt-3 mb-6 flex items-center gap-2">
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#E8F5F1] text-[#0E4A3E] border border-[#C0E6D8] text-xs font-bold shadow-2xs">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              Periode Aktif: {periodeInfo.nama_periode} ({periodeInfo.tahun})
-            </span>
-          </div>
-        )}
-
-        <div className="space-y-4 my-6">
-          {announcements.length === 0 ? (
-            <div className="w-full bg-gradient-to-b from-[#F6FAF8] to-white border border-[#C0E6D8] rounded-3xl p-8 sm:p-12 text-center shadow-xs">
-              {/* Icon Illustration */}
-              <div className="mx-auto w-20 h-20 rounded-3xl bg-[#E8F5F1] border border-[#C0E6D8] flex items-center justify-center text-[#0E4A3E] shadow-xs mb-5">
-                <BellRing className="w-9 h-9 text-[#0E4A3E] stroke-[2.2]" />
-              </div>
-
-              {/* Title & Description */}
-              <h3 className="text-lg sm:text-xl font-extrabold text-slate-800 tracking-tight">
-                Belum Ada Pengumuman Baru
-              </h3>
-              <p className="text-xs sm:text-sm text-slate-600 max-w-lg mx-auto mt-2 leading-relaxed">
-                Saat ini belum ada pengumuman resmi yang diterbitkan untuk{' '}
-                <strong className="text-slate-900">{periodeInfo?.nama_periode || 'periode aktif saat ini'}</strong>.
-                Seluruh informasi penting, pembaruan berkas, jadwal tes, dan hasil seleksi akan diumumkan di halaman ini.
+      <main className="flex-1 w-full">
+        {/* Top Title Section (White Background Area - Konsisten dengan /informasi, /persyaratan & /timeline) */}
+        <section className="py-6 sm:py-10 bg-white">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3 sm:space-y-4">
+            <div className="text-left space-y-1.5 sm:space-y-2">
+              <h1 className="text-base sm:text-2xl md:text-3xl lg:text-4xl font-archivo text-[#0E4A3E] tracking-tight leading-tight uppercase">
+                PENGUMUMAN & WARTA TERBARU <br className="hidden sm:block" />
+                KULIAH KERJA NYATA INTERNASIONAL
+              </h1>
+              <h2 className="text-[10px] sm:text-base md:text-lg lg:text-xl font-archivo text-[#0E4A3E] uppercase tracking-wide leading-tight">
+                UNIVERSITAS ISLAM NEGERI SIBER SYEKH NURJATI CIREBON
+              </h2>
+              {periodeInfo && (
+                <p className="text-[11px] sm:text-sm font-semibold text-gray-500 pt-0.5">
+                  Periode Pendaftaran: {periodeInfo.nama_periode} ({periodeInfo.tahun})
+                </p>
+              )}
+              <p className="text-[11px] sm:text-sm text-gray-600 max-w-2xl text-left font-normal leading-relaxed pt-0.5 sm:pt-1">
+                Ikuti seluruh informasi resmi, edaran berkas, jadwal tes seleksi bahasa dan wawancara, serta pengumuman hasil kelulusan delegasi peserta KKN Internasional.
               </p>
+            </div>
+          </div>
+        </section>
 
-              {/* Quick Navigation Cards */}
-              <div className="mt-8 pt-8 border-t border-slate-200/80 max-w-2xl mx-auto">
-                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-3.5">
-                  Sambil menunggu, Anda dapat memeriksa:
-                </span>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left">
-                  <Link
-                    href="/timeline"
-                    className="group p-4 rounded-2xl bg-white hover:bg-emerald-50/60 border border-slate-200 hover:border-emerald-300 transition-all shadow-2xs flex items-center justify-between gap-3"
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-10 h-10 rounded-xl bg-[#E8F5F1] text-[#0E4A3E] flex items-center justify-center shrink-0">
-                        <Calendar className="w-5 h-5 text-[#0E4A3E]" />
-                      </div>
-                      <div className="min-w-0">
-                        <h4 className="font-bold text-xs sm:text-sm text-slate-900 group-hover:text-[#0E4A3E] transition-colors truncate">
-                          Jadwal &amp; Timeline KKN
-                        </h4>
-                        <p className="text-[11px] text-slate-500 truncate">
-                          Pantau alur dan batas waktu tahapan
-                        </p>
-                      </div>
-                    </div>
-                    <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-[#0E4A3E] group-hover:translate-x-1 transition-all shrink-0" />
-                  </Link>
+        {/* Main Content Area (Sage Green Background #568E7D - Konsisten dengan /informasi, /persyaratan & /timeline) */}
+        <section className="bg-[#568E7D] text-white py-8 sm:py-14">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-12">
+            
+            {/* Announcements Card Container */}
+            <div className="bg-white/10 border border-white/25 rounded-2xl sm:rounded-3xl p-5 sm:p-8 md:p-10 shadow-xl space-y-6 sm:space-y-8">
+              
+              {/* Header Box */}
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/20 pb-3 sm:pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-white shrink-0 shadow-xs">
+                    <Megaphone className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-base sm:text-2xl font-archivo text-white tracking-wide uppercase">
+                      DAFTAR PENGUMUMAN RESMI
+                    </h2>
+                    <p className="text-[11px] sm:text-xs text-emerald-100/90 font-medium">
+                      {periodeInfo ? `Periode Aktif: ${periodeInfo.nama_periode} (${periodeInfo.tahun})` : 'Pemberitahuan Terkini LP2M'}
+                    </p>
+                  </div>
+                </div>
 
-                  <Link
-                    href="/persyaratan"
-                    className="group p-4 rounded-2xl bg-white hover:bg-emerald-50/60 border border-slate-200 hover:border-emerald-300 transition-all shadow-2xs flex items-center justify-between gap-3"
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-10 h-10 rounded-xl bg-[#E8F5F1] text-[#0E4A3E] flex items-center justify-center shrink-0">
-                        <FileText className="w-5 h-5 text-[#0E4A3E]" />
-                      </div>
-                      <div className="min-w-0">
-                        <h4 className="font-bold text-xs sm:text-sm text-slate-900 group-hover:text-[#0E4A3E] transition-colors truncate">
-                          Syarat Dokumen &amp; Nilai
-                        </h4>
-                        <p className="text-[11px] text-slate-500 truncate">
-                          Persiapkan kelengkapan berkas Anda
-                        </p>
-                      </div>
-                    </div>
-                    <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-[#0E4A3E] group-hover:translate-x-1 transition-all shrink-0" />
-                  </Link>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold bg-[#C0E6D8] text-[#0E4A3E] px-3.5 py-1 rounded-full shadow-xs flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5" />
+                    {announcements.length} Pengumuman
+                  </span>
                 </div>
               </div>
 
-              {/* Login Portal Reminder */}
-              <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100/80 border border-slate-200 text-[11px] text-slate-600">
-                <Sparkles className="w-3.5 h-3.5 text-[#0E4A3E]" />
-                <span>
-                  Sudah memiliki akun pendaftaran?{' '}
-                  <Link href="/login" className="font-bold text-[#0E4A3E] hover:underline">
-                    Masuk ke Portal Mahasiswa
-                  </Link>{' '}
-                  untuk memantau status seleksi Anda.
-                </span>
-              </div>
+              {/* Announcement Cards List */}
+              {announcements.length === 0 ? (
+                <div className="w-full bg-[#0E4A3E]/50 border border-white/20 rounded-2xl sm:rounded-3xl p-8 sm:p-12 text-center shadow-lg space-y-4">
+                  <div className="mx-auto w-16 h-16 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center text-[#C0E6D8] shadow-xs">
+                    <AlertCircle className="w-8 h-8 text-[#C0E6D8]" />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <h3 className="text-base sm:text-xl font-bold text-white tracking-tight">
+                      Belum Ada Pengumuman Baru
+                    </h3>
+                    <p className="text-xs sm:text-sm text-emerald-100/80 max-w-md mx-auto leading-relaxed">
+                      Saat ini belum ada pengumuman resmi yang diterbitkan untuk{' '}
+                      <strong className="text-white">{periodeInfo?.nama_periode || 'periode aktif'}</strong>.
+                      Seluruh informasi penting dan hasil seleksi akan diumumkan di sini.
+                    </p>
+                  </div>
+
+                  {/* Quick Links */}
+                  <div className="pt-4 flex flex-wrap items-center justify-center gap-3">
+                    <Link
+                      href="/timeline"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/15 hover:bg-white/25 text-white text-xs font-bold border border-white/20 transition-all"
+                    >
+                      <Calendar className="w-3.5 h-3.5 text-[#C0E6D8]" />
+                      <span>Cek Jadwal Timeline</span>
+                    </Link>
+                    <Link
+                      href="/persyaratan"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/15 hover:bg-white/25 text-white text-xs font-bold border border-white/20 transition-all"
+                    >
+                      <FileText className="w-3.5 h-3.5 text-[#C0E6D8]" />
+                      <span>Lihat Syarat Berkas</span>
+                    </Link>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-4 pt-1">
+                  {announcements.map((item) => (
+                    <AnnouncementCard
+                      key={item.id}
+                      id={item.id}
+                      day={item.day}
+                      month={item.month}
+                      year={item.year}
+                      title={item.title}
+                      summary={item.summary}
+                      authorStr={item.authorStr}
+                    />
+                  ))}
+                </div>
+              )}
+
             </div>
-          ) : (
-            announcements.map((item) => (
-              <AnnouncementCard
-                key={item.id}
-                id={item.id}
-                day={item.day}
-                month={item.month}
-                year={item.year}
-                title={item.title}
-                summary={item.summary}
-              />
-            ))
-          )}
-        </div>
+
+          </div>
+        </section>
+
       </main>
 
+      {/* Footer */}
       <Footer />
     </div>
   );

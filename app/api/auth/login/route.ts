@@ -48,17 +48,19 @@ export async function POST(req: NextRequest) {
     // 0. Pengecekan Brute Force Protection (Blokir 30 detik jika salah 5x)
     const ipLock = checkBruteForce(ipIdentifier);
     const userLock = checkBruteForce(userIdentifier);
-    const activeLock = ipLock.isLocked ? ipLock : userLock.isLocked ? userLock : null;
+    const isLockedPreCheck = ipLock.isLocked || userLock.isLocked;
+    const remainingSecondsPreCheck = Math.max(ipLock.remainingSeconds, userLock.remainingSeconds);
+    const currentAttemptsPreCheck = Math.max(ipLock.attempts, userLock.attempts);
 
-    if (activeLock) {
+    if (isLockedPreCheck) {
       return NextResponse.json(
         {
           success: false,
           isLocked: true,
-          remainingSeconds: activeLock.remainingSeconds,
-          attempts: activeLock.attempts,
+          remainingSeconds: remainingSecondsPreCheck,
+          attempts: currentAttemptsPreCheck,
           field: 'all',
-          message: `Terlalu banyak percobaan login gagal (5 kali). Akses Anda diblokir sementara selama ${activeLock.remainingSeconds} detik demi keamanan.`,
+          message: `Terlalu banyak percobaan login gagal (5 kali). Akses Anda diblokir sementara selama ${remainingSecondsPreCheck} detik demi keamanan.`,
         },
         { status: 429 }
       );
@@ -68,17 +70,21 @@ export async function POST(req: NextRequest) {
     const handleLoginFailure = (field: 'username' | 'password' | 'all', errorDetail: string) => {
       const ipResult = recordFailedAttempt(ipIdentifier);
       const userResult = recordFailedAttempt(userIdentifier);
-      const failureResult = ipResult.isLocked ? ipResult : userResult;
+      
+      const isLocked = ipResult.isLocked || userResult.isLocked;
+      const currentAttempts = Math.max(ipResult.attempts, userResult.attempts);
+      const remainingSeconds = Math.max(ipResult.remainingSeconds, userResult.remainingSeconds);
+      const attemptsLeft = Math.max(0, 5 - currentAttempts);
 
-      if (failureResult.isLocked) {
+      if (isLocked) {
         return NextResponse.json(
           {
             success: false,
             isLocked: true,
-            remainingSeconds: failureResult.remainingSeconds,
-            attempts: failureResult.attempts,
+            remainingSeconds: remainingSeconds,
+            attempts: currentAttempts,
             field: 'all',
-            message: `Terlalu banyak percobaan login gagal (5 kali berturut-turut). Akun Anda diblokir sementara selama ${failureResult.remainingSeconds} detik demi keamanan.`,
+            message: `Terlalu banyak percobaan login gagal (5 kali berturut-turut). Akun/perangkat Anda diblokir sementara selama ${remainingSeconds} detik demi keamanan.`,
           },
           { status: 429 }
         );
@@ -88,9 +94,9 @@ export async function POST(req: NextRequest) {
         {
           success: false,
           field,
-          attempts: failureResult.attempts,
-          attemptsLeft: failureResult.attemptsLeft,
-          message: `${errorDetail} (Percobaan gagal ke-${failureResult.attempts} dari 5)`,
+          attempts: currentAttempts,
+          attemptsLeft,
+          message: `${errorDetail} (Percobaan gagal ke-${currentAttempts} dari 5)`,
         },
         { status: 401 }
       );

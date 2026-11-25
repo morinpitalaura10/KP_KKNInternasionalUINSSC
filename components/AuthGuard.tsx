@@ -20,30 +20,40 @@ export default function AuthGuard({ allowedRoles, children }: AuthGuardProps) {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
+    const clearSessionAndRedirect = (url = '/login') => {
+      setIsAuthorized(false);
+      localStorage.removeItem('currentUser');
+      document.cookie = 'user_role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      document.cookie = 'user_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      document.cookie = 'bridge_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      window.location.replace(url);
+    };
+
     const verifySession = async () => {
-      // 1. Cek keberadaan cookie autentikasi
-      const hasRoleCookie = document.cookie
-        .split('; ')
-        .some((row) => row.startsWith('user_role='));
+      // 1. Cek nilai cookie user_role & user_session
+      const cookies = document.cookie.split('; ');
+      const roleCookieRow = cookies.find((row) => row.startsWith('user_role='));
+      const sessionCookieRow = cookies.find((row) => row.startsWith('user_session='));
+      const cookieRole = roleCookieRow ? roleCookieRow.split('=')[1] : '';
 
       // 2. Cek localStorage
       const stored = localStorage.getItem('currentUser');
 
-      if (!stored || !hasRoleCookie) {
-        setIsAuthorized(false);
-        localStorage.removeItem('currentUser');
-        document.cookie = 'user_role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-        document.cookie = 'user_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-        window.location.replace('/login');
+      if (!stored || !cookieRole || !sessionCookieRow) {
+        clearSessionAndRedirect('/login');
         return false;
       }
 
       try {
         const user: UserAccount = JSON.parse(stored);
 
-        if (!user || !user.role || !allowedRoles.includes(user.role)) {
-          setIsAuthorized(false);
-          window.location.replace('/login');
+        if (
+          !user ||
+          !user.role ||
+          user.role !== cookieRole ||
+          !allowedRoles.includes(user.role)
+        ) {
+          clearSessionAndRedirect('/login');
           return false;
         }
 
@@ -52,15 +62,15 @@ export default function AuthGuard({ allowedRoles, children }: AuthGuardProps) {
         // 3. Verifikasi ke database server: apakah akun masih ada atau sudah dihapus/dinonaktifkan
         try {
           const res = await fetch('/api/auth/verify', { cache: 'no-store' });
-          if (res.status === 401 || res.status === 403) {
+          if (res.status === 400 || res.status === 401 || res.status === 403) {
             const data = await res.json().catch(() => ({}));
-            setIsAuthorized(false);
-            localStorage.removeItem('currentUser');
-            document.cookie = 'user_role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-            document.cookie = 'user_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-            document.cookie = 'bridge_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-            const statusParam = data.reason === 'deleted' ? 'deleted' : 'inactive';
-            window.location.replace(`/login?status=${statusParam}`);
+            const statusParam =
+              data.reason === 'deleted'
+                ? '?status=deleted'
+                : data.reason === 'inactive'
+                ? '?status=inactive'
+                : '';
+            clearSessionAndRedirect(`/login${statusParam}`);
             return false;
           }
         } catch {
@@ -69,16 +79,13 @@ export default function AuthGuard({ allowedRoles, children }: AuthGuardProps) {
 
         return true;
       } catch {
-        localStorage.removeItem('currentUser');
-        setIsAuthorized(false);
-        window.location.replace('/login');
+        clearSessionAndRedirect('/login');
         return false;
       }
     };
 
     verifySession();
 
-    // Deteksi jika halaman dipulihkan dari browser Back/Forward Cache (BFCache)
     const handlePageShow = () => {
       verifySession();
     };
@@ -89,7 +96,6 @@ export default function AuthGuard({ allowedRoles, children }: AuthGuardProps) {
     };
   }, [allowedRoles]);
 
-  // Selama belum terverifikasi atau jika tidak berhak, jangan pernah render children dashboard
   if (!isAuthorized) {
     return (
       <div className="h-screen w-screen bg-slate-50 flex items-center justify-center">

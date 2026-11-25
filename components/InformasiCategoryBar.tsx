@@ -31,14 +31,14 @@ function CategoryBarContent() {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto bg-[#0E4A3E] text-white rounded-2xl p-2 sm:p-2.5 shadow-xl grid grid-cols-1 sm:grid-cols-2 gap-2 text-center">
+    <div className="w-full max-w-md mx-auto bg-slate-100 p-1.5 rounded-full border border-slate-200 shadow-xs flex items-center justify-center gap-1">
       <button
         type="button"
         onClick={() => handleSelectTab('tentang')}
-        className={`w-full px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm md:text-base transition-all cursor-pointer text-center ${
+        className={`flex-1 py-2 sm:py-2.5 px-3 sm:px-4 rounded-full font-bold text-xs sm:text-sm transition-all cursor-pointer text-center truncate ${
           activeTab === 'tentang'
-            ? 'bg-[#1b6354] text-white shadow-md ring-1 ring-white/30'
-            : 'text-white/80 hover:text-white hover:bg-white/10'
+            ? 'bg-[#0E4A3E] text-white shadow-sm'
+            : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
         }`}
       >
         Tentang KKN
@@ -47,13 +47,13 @@ function CategoryBarContent() {
       <button
         type="button"
         onClick={() => handleSelectTab('tujuan')}
-        className={`w-full px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm md:text-base transition-all cursor-pointer text-center ${
+        className={`flex-1 py-2 sm:py-2.5 px-3 sm:px-4 rounded-full font-bold text-xs sm:text-sm transition-all cursor-pointer text-center truncate ${
           activeTab === 'tujuan'
-            ? 'bg-[#1b6354] text-white shadow-md ring-1 ring-white/30'
-            : 'text-white/80 hover:text-white hover:bg-white/10'
+            ? 'bg-[#0E4A3E] text-white shadow-sm'
+            : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
         }`}
       >
-        Negara Tujuan & Pelaksanaan
+        Negara & Pelaksanaan
       </button>
     </div>
   );
@@ -63,8 +63,8 @@ export default function InformasiCategoryBar() {
   return (
     <Suspense
       fallback={
-        <div className="bg-[#0E4A3E] text-white rounded-2xl p-4 shadow-xl flex justify-center items-center h-14">
-          <div className="h-4 w-48 bg-white/20 animate-pulse rounded" />
+        <div className="bg-slate-100 rounded-full p-2 border border-slate-200 max-w-md mx-auto flex justify-center items-center h-11">
+          <div className="h-4 w-40 bg-slate-200 animate-pulse rounded-full" />
         </div>
       }
     >

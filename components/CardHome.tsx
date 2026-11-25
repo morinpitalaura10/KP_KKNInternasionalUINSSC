@@ -19,7 +19,7 @@ const cardItems: CardInfoItem[] = [
     buttonHref: '/informasi',
     icon: (
       /* Info Icon (i) */
-      <svg className="w-7 h-7 text-[#0E4A3E] fill-none stroke-current stroke-2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+      <svg className="w-4 h-4 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-[#0E4A3E] fill-none stroke-current stroke-2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="10" />
         <line x1="12" y1="16" x2="12" y2="12" />
         <line x1="12" y1="8" x2="12.01" y2="8" />
@@ -34,7 +34,7 @@ const cardItems: CardInfoItem[] = [
     buttonHref: '/persyaratan',
     icon: (
       /* List / Checklist Icon */
-      <svg className="w-7 h-7 text-[#0E4A3E] fill-none stroke-current stroke-2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+      <svg className="w-4 h-4 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-[#0E4A3E] fill-none stroke-current stroke-2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
         <line x1="8" y1="6" x2="21" y2="6" />
         <line x1="8" y1="12" x2="21" y2="12" />
         <line x1="8" y1="18" x2="21" y2="18" />
@@ -52,7 +52,7 @@ const cardItems: CardInfoItem[] = [
     buttonHref: '/timeline',
     icon: (
       /* Timeline / Trending Icon */
-      <svg className="w-7 h-7 text-[#0E4A3E] fill-none stroke-current stroke-2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+      <svg className="w-4 h-4 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-[#0E4A3E] fill-none stroke-current stroke-2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
         <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
         <polyline points="16 7 22 7 22 13" />
       </svg>
@@ -66,7 +66,7 @@ const cardItems: CardInfoItem[] = [
     buttonHref: '/pengumuman',
     icon: (
       /* Megaphone / Bell Icon */
-      <svg className="w-7 h-7 text-[#0E4A3E] fill-none stroke-current stroke-2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+      <svg className="w-4 h-4 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-[#0E4A3E] fill-none stroke-current stroke-2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
         <path d="m3 11 18-5v12L3 13v-2z" />
         <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6" />
       </svg>
@@ -76,38 +76,38 @@ const cardItems: CardInfoItem[] = [
 
 export default function CardHome() {
   return (
-    <section className="w-full py-12 px-4 sm:px-6 lg:px-8 bg-white font-sans">
+    <section className="w-full py-6 sm:py-12 px-3 sm:px-6 lg:px-8 bg-white font-sans">
       <div className="max-w-7xl mx-auto">
-        {/* 4 Cards Grid (Hijau Muda #568E7D) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* 4 Cards Grid - 2x2 sejajar di HP (grid-cols-2), 4 kolom di desktop (lg:grid-cols-4) */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 lg:gap-6">
           {cardItems.map((card) => (
             <div
               key={card.id}
-              className="bg-[#568E7D] text-white rounded-2xl p-6 shadow-lg flex flex-col items-center text-center justify-between transition-all duration-300 hover:shadow-xl hover:-translate-y-1 min-h-[300px]"
+              className="bg-[#568E7D] text-white rounded-xl sm:rounded-2xl p-3 sm:p-5 lg:p-6 shadow-md flex flex-col items-center text-center justify-between transition-all duration-300 hover:shadow-xl hover:-translate-y-1 min-h-[210px] sm:min-h-[260px] lg:min-h-[290px]"
             >
               {/* Top Section: Icon & Content */}
-              <div className="flex flex-col items-center space-y-3 w-full">
+              <div className="flex flex-col items-center space-y-1.5 sm:space-y-3 w-full">
                 {/* Circle Icon Badge */}
-                <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-md mb-1">
+                <div className="w-9 h-9 sm:w-12 sm:h-12 lg:w-14 lg:h-14 bg-white rounded-full flex items-center justify-center shadow-md mb-0.5 sm:mb-1 shrink-0">
                   {card.icon}
                 </div>
 
                 {/* Card Title */}
-                <h3 className="text-base sm:text-lg font-bold text-white leading-snug">
+                <h3 className="text-xs sm:text-base lg:text-lg font-bold text-white leading-tight line-clamp-2">
                   {card.title}
                 </h3>
 
                 {/* Card Description */}
-                <p className="text-xs sm:text-sm text-white/90 leading-relaxed font-normal">
+                <p className="text-[10px] sm:text-xs lg:text-sm text-white/90 leading-snug line-clamp-3 sm:line-clamp-none">
                   {card.description}
                 </p>
               </div>
 
               {/* Bottom Section: Action Button */}
-              <div className="pt-5 w-full flex justify-center">
+              <div className="pt-2 sm:pt-4 w-full flex justify-center">
                 <Link
                   href={card.buttonHref}
-                  className="bg-[#0E4A3E] hover:bg-[#09352c] text-white text-xs sm:text-sm font-semibold px-6 py-2.5 rounded-full shadow-md transition-all hover:scale-105"
+                  className="w-full sm:w-auto bg-[#0E4A3E] hover:bg-[#09352c] text-white text-[10px] sm:text-xs lg:text-sm font-semibold px-2.5 sm:px-5 lg:px-6 py-1.5 sm:py-2 lg:py-2.5 rounded-full shadow-md transition-all hover:scale-105 active:scale-95 text-center truncate"
                 >
                   {card.buttonText}
                 </Link>

@@ -1,3 +1,4 @@
 {
-  "css.lint.unknownAtRules": "ignore"
+  "css.lint.unknownAtRules": "ignore",
+  "python.defaultInterpreterPath": "C:\\Users\\Asus\\AppData\\Local\\Programs\\Python\\Python314\\python.exe"
 }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { checkTimelineWindow } from '@/lib/timelineGuard';
 
 // Helper to map wawancara data to clean JSON response
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -208,6 +209,15 @@ export async function GET(req: NextRequest) {
       select: { id_periode: true, nama_periode: true, tahun: true, status: true },
     });
 
+    const targetPeriodeId =
+      idPeriode && idPeriode !== 'all'
+        ? parseInt(idPeriode, 10)
+        : activePeriode?.id_periode || (periodes[0]?.id_periode ?? null);
+
+    const timelineGuard = targetPeriodeId
+      ? await checkTimelineWindow(targetPeriodeId, 'wawancara')
+      : { isOpen: true, status: 'TIDAK_DITEMUKAN' };
+
     return NextResponse.json({
       success: true,
       data: items.map(mapWawancaraItem),
@@ -219,6 +229,7 @@ export async function GET(req: NextRequest) {
             status: 'Aktif',
           }
         : null,
+      timelineGuard,
       kriteria_wawancara: kriteriaWawancara.map((k) => ({
         id_kriteria_wawancara: k.id_kriteria_wawancara,
         id_periode: k.id_periode,
@@ -267,6 +278,17 @@ export async function PUT(req: NextRequest) {
     });
     if (!existing) {
       return NextResponse.json({ success: false, message: 'Data wawancara tidak ditemukan' }, { status: 404 });
+    }
+
+    // Timeline Guard: Pastikan tahapan wawancara sudah dibuka
+    if (existing.pendaftaran?.id_periode) {
+      const guard = await checkTimelineWindow(existing.pendaftaran.id_periode, 'wawancara');
+      if (!guard.isOpen) {
+        return NextResponse.json(
+          { success: false, message: guard.message || 'Tahapan penilaian wawancara belum dibuka!' },
+          { status: 403 }
+        );
+      }
     }
 
     // Update wawancara fields

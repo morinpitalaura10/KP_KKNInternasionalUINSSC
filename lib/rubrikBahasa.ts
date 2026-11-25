@@ -26,6 +26,9 @@ export interface RubrikJenjang {
   toeicLabel: string;
   toeicMin: number;
   toeicMax: number;
+  toaflLabel: string;
+  toaflMin: number;
+  toaflMax: number;
   nilaiStandar: number;
   rentangNilai: string;
   indikator: string;
@@ -44,8 +47,8 @@ export interface RubrikArabJenjang {
   indikator: string;
 }
 
-// ── KELOMPOK 1: BAHASA INGGRIS (TOEFL, IELTS, TOEIC) ──
-// Standarisasi Skor: 0, 20, 30, 40, 50 (Dinamis & Terkunci Sistem)
+// ── STANDARISASI TUNGGAL KEMAMPUAN BAHASA ASING (TOEFL, IELTS, TOEIC, TOAFL) ──
+// Standarisasi Skor: 0, 20, 30, 40, 50 (Hanya 1 jenis tes yang dipilih & dihitung)
 export const RUBRIK_BAHASA_JENJANG: RubrikJenjang[] = [
   {
     poin: 0,
@@ -61,6 +64,9 @@ export const RUBRIK_BAHASA_JENJANG: RubrikJenjang[] = [
     toeicLabel: 'TOEIC 0 (Belum tes / < 105)',
     toeicMin: 0,
     toeicMax: 100,
+    toaflLabel: 'TOAFL 0 (Belum tes / < 300)',
+    toaflMin: 0,
+    toaflMax: 299,
     nilaiStandar: 0,
     rentangNilai: '0',
     indikator: 'Belum memiliki sertifikat tes resmi terstandarisasi.',
@@ -70,7 +76,7 @@ export const RUBRIK_BAHASA_JENJANG: RubrikJenjang[] = [
     poin: 1,
     skor: 20,
     tingkat: 'Tingkat Dasar',
-    predikat: 'Elementary / Novice',
+    predikat: 'Elementary / Mubtadi\'',
     toeflLabel: 'TOEFL 311 - 420',
     toeflMin: 311,
     toeflMax: 420,
@@ -80,6 +86,9 @@ export const RUBRIK_BAHASA_JENJANG: RubrikJenjang[] = [
     toeicLabel: 'TOEIC 105 - 400',
     toeicMin: 105,
     toeicMax: 400,
+    toaflLabel: 'TOAFL 300 - 375',
+    toaflMin: 300,
+    toaflMax: 375,
     nilaiStandar: 20,
     rentangNilai: '20',
     indikator: 'Mampu memahami percakapan umum sederhana.',
@@ -89,7 +98,7 @@ export const RUBRIK_BAHASA_JENJANG: RubrikJenjang[] = [
     poin: 2,
     skor: 30,
     tingkat: 'Tingkat Menengah',
-    predikat: 'Intermediate',
+    predikat: 'Intermediate / Mutawassith',
     toeflLabel: 'TOEFL 421 - 475',
     toeflMin: 421,
     toeflMax: 475,
@@ -99,6 +108,9 @@ export const RUBRIK_BAHASA_JENJANG: RubrikJenjang[] = [
     toeicLabel: 'TOEIC 405 - 600',
     toeicMin: 405,
     toeicMax: 600,
+    toaflLabel: 'TOAFL 376 - 450',
+    toaflMin: 376,
+    toaflMax: 450,
     nilaiStandar: 30,
     rentangNilai: '30',
     indikator: 'Mampu berkomunikasi sehari-hari secara wajar.',
@@ -108,7 +120,7 @@ export const RUBRIK_BAHASA_JENJANG: RubrikJenjang[] = [
     poin: 3,
     skor: 40,
     tingkat: 'Tingkat Mahir Terbatas',
-    predikat: 'Upper-Intermediate',
+    predikat: 'Upper-Intermediate / Mutaqaddim',
     toeflLabel: 'TOEFL 476 - 525',
     toeflMin: 476,
     toeflMax: 525,
@@ -118,6 +130,9 @@ export const RUBRIK_BAHASA_JENJANG: RubrikJenjang[] = [
     toeicLabel: 'TOEIC 605 - 780',
     toeicMin: 605,
     toeicMax: 780,
+    toaflLabel: 'TOAFL 451 - 500',
+    toaflMin: 451,
+    toaflMax: 500,
     nilaiStandar: 40,
     rentangNilai: '40',
     indikator: 'Artikulatif, lancar, dan siap mempresentasikan gagasan.',
@@ -127,7 +142,7 @@ export const RUBRIK_BAHASA_JENJANG: RubrikJenjang[] = [
     poin: 4,
     skor: 50,
     tingkat: 'Tingkat Mahir / Fasih',
-    predikat: 'Advanced / Fluent',
+    predikat: 'Advanced / Mumtaz',
     toeflLabel: 'TOEFL ≥ 526 (hingga 677)',
     toeflMin: 526,
     toeflMax: 677,
@@ -137,6 +152,9 @@ export const RUBRIK_BAHASA_JENJANG: RubrikJenjang[] = [
     toeicLabel: 'TOEIC ≥ 785 (hingga 990)',
     toeicMin: 785,
     toeicMax: 990,
+    toaflLabel: 'TOAFL ≥ 501 (hingga 600)',
+    toaflMin: 501,
+    toaflMax: 600,
     nilaiStandar: 50,
     rentangNilai: '50',
     indikator: 'Sangat fasih dan memiliki kosakata internasional unggul.',
@@ -252,6 +270,18 @@ export function hitungSkorToafl(skor: number): RubrikArabJenjang {
 }
 
 /**
+ * Konversi skor TOAFL (Bahasa Arab) ke Jenjang Rubrik Standar (0, 20, 30, 40, 50)
+ */
+export function hitungSkorToaflJenjang(skor: number): RubrikJenjang {
+  if (skor <= 0) return RUBRIK_BAHASA_JENJANG[0];
+  if (skor >= 501) return RUBRIK_BAHASA_JENJANG[4];
+  if (skor >= 451) return RUBRIK_BAHASA_JENJANG[3];
+  if (skor >= 376) return RUBRIK_BAHASA_JENJANG[2];
+  if (skor >= 300) return RUBRIK_BAHASA_JENJANG[1];
+  return RUBRIK_BAHASA_JENJANG[0];
+}
+
+/**
  * Cek apakah nama kriteria merupakan kriteria Kemampuan Bahasa Asing
  */
 export function isKriteriaBahasa(namaKriteria: string): boolean {
@@ -283,7 +313,7 @@ export function deteksiSkorBahasa(text?: string | null): {
   }
 
   // Deteksi jika mahasiswa menyatakan belum ada tes (Skor 0)
-  if (text.includes('Poin 0') || text.includes('Skor 0') || text.toLowerCase().includes('belum memiliki sertifikat') || text.toLowerCase().includes('belum pernah tes')) {
+  if (text.includes('Poin 0') || text.includes('Skor 0') || text.includes('Skor Sistem: 0') || text.toLowerCase().includes('belum memiliki sertifikat') || text.toLowerCase().includes('belum pernah tes')) {
     return {
       jenis: 'TOEFL',
       skor: 0,
@@ -332,6 +362,20 @@ export function deteksiSkorBahasa(text?: string | null): {
         jenis: 'IELTS',
         skor,
         jenjang: hitungSkorIelts(skor),
+        arabJenjang: detectedArab,
+        arabSkor: detectedArabSkor,
+      };
+    }
+  }
+
+  // Deteksi TOAFL tunggal: TOAFL 450
+  if (toaflMatch && toaflMatch[1]) {
+    const skor = parseInt(toaflMatch[1], 10);
+    if (skor >= 250 && skor <= 650) {
+      return {
+        jenis: 'TOAFL',
+        skor,
+        jenjang: hitungSkorToaflJenjang(skor),
         arabJenjang: detectedArab,
         arabSkor: detectedArabSkor,
       };

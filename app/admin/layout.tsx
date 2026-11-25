@@ -24,7 +24,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         }
       }
 
-      // Cegah tombol Back browser keluar ke /login saat user sedang aktif di dashboard
       const handlePopState = () => {
         if (window.location.pathname === '/login') {
           window.history.forward();
@@ -39,11 +38,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <AuthGuard allowedRoles={['admin']}>
-      <div className="h-screen max-h-screen flex flex-col bg-slate-50 font-sans overflow-hidden">
+      <div className="fixed inset-0 h-dvh max-h-dvh w-full flex flex-col bg-slate-50 font-sans overflow-hidden pt-[52px] sm:pt-[60px]">
         <HeaderMhs onToggleSidebar={handleToggle} isSidebarOpen={sidebarOpen} />
         <div className="flex flex-1 overflow-hidden relative min-h-0">
           <SidebarAdm user={user} isOpen={sidebarOpen} onToggle={handleToggle} />
-          <main className="flex-1 overflow-y-auto transition-all duration-300 ease-in-out p-4 sm:p-6 lg:p-8">
+          <main className="flex-1 overflow-y-auto overscroll-contain transition-all duration-300 ease-in-out p-4 sm:p-6 lg:p-8">
             <div className="w-full max-w-7xl mx-auto">
               {children}
             </div>

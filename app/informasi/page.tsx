@@ -149,65 +149,62 @@ export default async function InformasiPage() {
             <main className="flex-1 w-full">
 
                 {/* Top Title & Category Navigation Bar (White Background Area) */}
-                <section className="py-12 bg-white">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+                <section className="py-6 sm:py-10 bg-white">
+                    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-5 sm:space-y-6">
 
-                        {/* Title Block (Left Aligned matching Header text position) */}
-                        <div className="text-left space-y-2 pl-14 sm:pl-[68px]">
-                            <h1 className="text-2xl sm:text-3xl md:text-4xl font-archivo text-[#0E4A3E] tracking-tight leading-tight uppercase">
+                        {/* Title Block (Aligned with consistent container margins) */}
+                        <div className="text-left space-y-1.5 sm:space-y-2">
+                            <h1 className="text-base sm:text-2xl md:text-3xl lg:text-4xl font-archivo text-[#0E4A3E] tracking-tight leading-tight uppercase">
                                 INFORMASI SINGKAT TENTANG <br className="hidden sm:block" />
                                 KULIAH KERJA NYATA INTERNASIONAL
                             </h1>
-                            <h2 className="text-base sm:text-lg md:text-xl font-archivo text-[#0E4A3E] uppercase">
+                            <h2 className="text-[10px] sm:text-base md:text-lg lg:text-xl font-archivo text-[#0E4A3E] uppercase tracking-wide leading-tight">
                                 UNIVERSITAS ISLAM NEGERI SIBER SYEKH NURJATI CIREBON
                             </h2>
-                            <p className="text-xs sm:text-sm text-gray-600 max-w-2xl text-left pt-2 font-normal">
+                            <p className="text-[11px] sm:text-sm text-gray-600 max-w-2xl text-left font-normal leading-relaxed pt-0.5 sm:pt-1">
                                 Pelajari lebih lanjut mengenai program, tujuan, lokasi, dan kegiatan KKN Internasional UIN Siber Syekh Nurjati Cirebon
                             </p>
                         </div>
 
                         {/* Safe Query String Category Bar (?tab=...) */}
-                        <InformasiCategoryBar />
+                        <div className="pt-1 sm:pt-2">
+                            <InformasiCategoryBar />
+                        </div>
 
                     </div>
                 </section>
 
                 {/* Main Content Area (Sage Green Background #568E7D) */}
-                <section className="bg-[#568E7D] text-white py-14">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+                <section className="bg-[#568E7D] text-white py-8 sm:py-14">
+                    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-12">
 
-                        {/* 1. TENTANG KKN INTERNASIONAL */}
-                        <div id="tentang" className="scroll-mt-24 space-y-6">
-                            <div className="flex flex-wrap items-center justify-between gap-3">
-                                <h2 className="text-2xl sm:text-3xl font-archivo text-white tracking-wide uppercase">
+                        {/* 1. TENTANG KKN INTERNASIONAL (Framed into neat, clean card container) */}
+                        <div id="tentang" className="scroll-mt-24 bg-white/10 border border-white/25 rounded-2xl sm:rounded-3xl p-4 sm:p-8 md:p-10 shadow-xl space-y-4 sm:space-y-6">
+                            <div className="flex flex-wrap items-center justify-between gap-2.5 border-b border-white/20 pb-3 sm:pb-4">
+                                <h2 className="text-base sm:text-2xl md:text-3xl font-archivo text-white tracking-wide uppercase">
                                     {infoTentang?.judul || 'TENTANG KKN INTERNASIONAL'}
                                 </h2>
-                                {infoTentang && (
-                                    infoTentang.periode?.nama_periode ? (
-                                        <span className="text-xs font-bold bg-[#C0E6D8] text-[#0E4A3E] px-3.5 py-1 rounded-full shadow-xs">
-                                            {infoTentang.periode.nama_periode}
-                                        </span>
-                                    ) : (
-                                        <span className="text-xs font-bold bg-white/20 text-white border border-white/30 px-3 py-1 rounded-full shadow-xs">
-                                            Semua Periode (Selalu Aktif)
-                                        </span>
-                                    )
+                                {infoTentang?.periode?.nama_periode && 
+                                 !infoTentang.judul?.toLowerCase().includes(infoTentang.periode.nama_periode.toLowerCase()) && (
+                                    <span className="text-xs font-bold bg-[#C0E6D8] text-[#0E4A3E] px-3.5 py-1 rounded-full shadow-xs">
+                                        {infoTentang.periode.nama_periode}
+                                    </span>
                                 )}
                             </div>
 
-                            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 items-center">
                                 {/* Left Description Text */}
-                                <div className="lg:col-span-7 space-y-4 text-gray-100 text-sm sm:text-base leading-relaxed">
+                                <div className="lg:col-span-7 space-y-3 sm:space-y-4 text-emerald-50/95 text-xs sm:text-base leading-relaxed">
                                     {infoTentang?.isi ? (
-                                        <p className="whitespace-pre-line leading-relaxed">
+                                        <p className="whitespace-pre-line leading-relaxed font-normal">
                                             {infoTentang.isi}
                                         </p>
                                     ) : (
-                                        <div className="p-6 rounded-2xl bg-white/10 border border-white/20 text-emerald-100 text-xs sm:text-sm space-y-2">
-                                            <p className="font-bold text-white text-base">
+                                        <div className="p-4 sm:p-6 rounded-2xl bg-white/10 border border-white/20 text-emerald-100 text-xs sm:text-sm space-y-1.5">
+                                            <p className="font-bold text-white text-sm sm:text-base">
                                                 Informasi Belum Diaktifkan
                                             </p>
-                                            <p className="text-white/80 leading-relaxed">
+                                            <p className="text-white/80 leading-relaxed font-normal">
                                                 Saat ini belum ada artikel informasi yang diaktifkan oleh administrator. Silakan aktifkan informasi melalui menu Kelola Informasi di Admin untuk menampilkannya di sini.
                                             </p>
                                         </div>
@@ -216,7 +213,7 @@ export default async function InformasiPage() {
 
                                 {/* Right Photo Frame */}
                                 <div className="lg:col-span-5">
-                                    <div className="relative w-full aspect-[4/3] rounded-2xl border-4 border-white overflow-hidden shadow-2xl bg-emerald-900/30">
+                                    <div className="relative w-full aspect-[16/10] sm:aspect-[4/3] rounded-xl sm:rounded-2xl border-2 sm:border-4 border-white overflow-hidden shadow-xl bg-emerald-900/30">
                                         <Image
                                             src={infoTentang?.gambar || '/uinssc_delegates.jpg?v=2'}
                                             alt={infoTentang?.judul || 'Mahasiswa KKN Internasional UINSSC'}
@@ -231,19 +228,19 @@ export default async function InformasiPage() {
                         </div>
 
                         {/* 2. Pelaksanaan KKN Internasional (Key Stats Cards) */}
-                        <div id="tujuan" className="scroll-mt-24 space-y-6">
-                            <div className="text-center space-y-1">
-                                <h3 className="text-xl sm:text-2xl font-archivo text-white tracking-wide uppercase">
+                        <div id="tujuan" className="scroll-mt-24 bg-white/10 border border-white/25 rounded-2xl sm:rounded-3xl p-4 sm:p-8 md:p-10 shadow-xl space-y-5 sm:space-y-6">
+                            <div className="text-center space-y-1 border-b border-white/20 pb-3 sm:pb-4">
+                                <h3 className="text-base sm:text-2xl font-archivo text-white tracking-wide uppercase">
                                     PELAKSANAAN KKN INTERNASIONAL
                                 </h3>
                                 {activePeriode && (
-                                    <p className="text-xs sm:text-sm font-semibold text-emerald-100/90">
+                                    <p className="text-[11px] sm:text-sm font-semibold text-emerald-100/90">
                                         Periode Aktif: {activePeriode.nama_periode} ({activePeriode.tahun})
                                     </p>
                                 )}
                             </div>
 
-                            <div className="border-2 border-white/60 bg-[#568E7D] shadow-lg rounded-2xl p-6 sm:p-8 text-white grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 pt-2">
                                 {/* Stat 1: Waktu & Periode */}
                                 <QuickStatItem
                                     icon={

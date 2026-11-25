@@ -8,8 +8,16 @@ interface BruteForceRecord {
 const MAX_ATTEMPTS = 5;
 const LOCKOUT_DURATION_MS = 30 * 1000; // 30 detik
 
-// In-memory tracker untuk brute force
-const attemptStore = new Map<string, BruteForceRecord>();
+// In-memory tracker untuk brute force yang persisten di Next.js dev mode & production
+const globalForRateLimit = globalThis as unknown as {
+  __bruteForceStore?: Map<string, BruteForceRecord>;
+};
+
+const attemptStore = globalForRateLimit.__bruteForceStore || new Map<string, BruteForceRecord>();
+
+if (!globalForRateLimit.__bruteForceStore) {
+  globalForRateLimit.__bruteForceStore = attemptStore;
+}
 
 export function getClientIp(req: NextRequest): string {
   const forwarded = req.headers.get('x-forwarded-for');
