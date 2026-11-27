@@ -145,7 +145,7 @@ export default function StaffPerangkinganView({
           <button
             type="button"
             onClick={() => onSetSawModalOpen(true)}
-            className="kkn-hero-action-btn shadow-xs self-start sm:self-auto"
+            className="kkn-hero-action-btn shadow-xs w-full sm:w-auto"
           >
             <Calculator className="w-4 h-4 text-[#C0E6D8]" />
             <span>Matriks Perhitungan SAW</span>

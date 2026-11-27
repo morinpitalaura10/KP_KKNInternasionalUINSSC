@@ -175,7 +175,7 @@ export default function StaffVerifikasiView({
           <button
             onClick={onRefresh}
             disabled={isLoading}
-            className="kkn-hero-action-btn shadow-xs self-start sm:self-auto"
+            className="kkn-hero-action-btn shadow-xs w-full sm:w-auto"
             title="Muat ulang data verifikasi"
           >
             <RefreshCw className={`w-4 h-4 text-[#C0E6D8] ${isLoading ? 'animate-spin' : ''}`} />

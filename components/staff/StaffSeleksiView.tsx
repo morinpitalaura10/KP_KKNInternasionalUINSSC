@@ -122,7 +122,7 @@ export default function StaffSeleksiView({
           <button
             type="button"
             onClick={onExportCSV}
-            className="kkn-hero-action-btn shadow-xs self-start sm:self-auto"
+            className="kkn-hero-action-btn shadow-xs w-full sm:w-auto"
           >
             <FileSpreadsheet className="w-4 h-4 text-[#C0E6D8]" />
             <span>Ekspor CSV</span>

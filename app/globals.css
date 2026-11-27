@@ -454,7 +454,7 @@
   justify-content: space-between;
   gap: 1.5rem;
 }
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .kkn-hero-inner {
     flex-direction: row;
     align-items: center;
@@ -514,7 +514,8 @@
   border-radius: 1rem;
   padding: 1rem;
   color: #ffffff;
-  min-width: 220px;
+  min-width: 200px;
+  max-width: 100%;
 }
 @media (min-width: 640px) {
   .kkn-hero-aside-card {

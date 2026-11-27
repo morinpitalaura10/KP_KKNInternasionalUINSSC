@@ -31,11 +31,11 @@ export function HeroAsideCard({
   children,
 }: HeroAsideCardProps) {
   return (
-    <div className={`kkn-hero-aside-card space-y-1.5 self-start md:self-auto ${className}`}>
+    <div className={`kkn-hero-aside-card space-y-1.5 self-start md:self-auto max-w-full ${className}`}>
       <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#C0E6D8] block">
         {label}
       </span>
-      <div className="font-extrabold text-base sm:text-lg leading-tight text-white">
+      <div className="font-extrabold text-base sm:text-lg leading-tight text-white break-words">
         {title}
       </div>
       {subtitle && (
@@ -65,7 +65,7 @@ export default function HeroBanner({
       <div className="kkn-hero-glow-bottom" />
 
       <div className="kkn-hero-inner">
-        <div className="space-y-3 max-w-2xl">
+        <div className="space-y-3 max-w-2xl min-w-0 flex-1">
           {(badgeIcon || badgeText) && (
             <div className="kkn-hero-badge">
               {badgeIcon}
@@ -79,7 +79,7 @@ export default function HeroBanner({
         </div>
 
         {(aside || action) && (
-          <div className="w-full md:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3 self-stretch md:self-auto min-w-0 max-w-full">
+          <div className="w-full md:w-auto flex flex-col 2xl:flex-row flex-wrap items-stretch md:items-end 2xl:items-center gap-2.5 self-stretch md:self-auto min-w-0 max-w-full shrink-0">
             {aside}
             {action}
           </div>
