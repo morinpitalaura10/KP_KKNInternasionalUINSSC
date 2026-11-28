@@ -182,13 +182,13 @@ export default function AdminPengumumanView({
           <div className="kkn-table-inner">
         {/* Table Header Bar (#0E4A3E) */}
         <div className="kkn-table-header">
-          <div className="kkn-table-header-grid">
-            <span className="col-span-1 text-center">No</span>
-            <span className="col-span-4">Judul Pengumuman</span>
-            <span className="col-span-2">Periode</span>
-            <span className="col-span-3">Tgl Publish</span>
-            <span className="col-span-1 text-center">Status</span>
-            <span className="col-span-1 text-center">Aksi</span>
+          <div className="grid grid-cols-[55px_minmax(280px,1fr)_190px_160px_110px_90px] items-center gap-3 w-full min-w-[880px] text-xs font-extrabold tracking-wider uppercase">
+            <span className="text-center">No</span>
+            <span>Judul Pengumuman</span>
+            <span>Periode</span>
+            <span>Tgl Publish</span>
+            <span className="text-center">Status</span>
+            <span className="text-center">Aksi</span>
           </div>
         </div>
 
@@ -212,25 +212,25 @@ export default function AdminPengumumanView({
         ) : (
           <div className="divide-y divide-slate-100">
             {filteredItems.map((item, idx) => (
-              <div key={item.id} className="kkn-table-row">
-                <span className="col-span-1 text-center font-bold text-slate-500">{idx + 1}</span>
+              <div key={item.id} className="grid grid-cols-[55px_minmax(280px,1fr)_190px_160px_110px_90px] items-center gap-3 px-6 py-4 w-full min-w-[880px] transition-colors hover:bg-slate-50/80 text-[13px]">
+                <span className="text-center font-bold text-slate-500">{idx + 1}</span>
 
-                <div className="col-span-4 pr-3">
+                <div className="pr-3 min-w-0">
                   <p className="font-bold text-slate-800 leading-snug truncate">{item.judul}</p>
                   <p className="text-[11px] text-slate-400 truncate mt-0.5">{item.isi}</p>
                 </div>
 
-                <div className="col-span-2 text-slate-600">
+                <div className="text-slate-600 truncate">
                   <span className="font-semibold text-xs text-slate-700">{item.nama_periode || '-'}</span>
                 </div>
 
-                <div className="col-span-3 text-slate-600 flex items-center gap-1.5">
+                <div className="text-slate-600 flex items-center gap-1.5 whitespace-nowrap">
                   <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                   <span className="font-semibold text-xs">{formatDate(item.tanggal_publish)}</span>
                 </div>
 
                 {/* Status Badges: Publish vs Private (klik untuk toggle) */}
-                <div className="col-span-1 flex justify-center">
+                <div className="flex justify-center">
                   <button
                     type="button"
                     onClick={() => handleToggleStatus(item)}
@@ -250,7 +250,7 @@ export default function AdminPengumumanView({
                 </div>
 
                 {/* Aksi: Edit & Delete */}
-                <div className="col-span-1 flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center gap-2">
                   <button
                     onClick={() => handleOpenEdit(item)}
                     title="Edit Pengumuman"
@@ -270,24 +270,27 @@ export default function AdminPengumumanView({
             ))}
           </div>
         )}
+
+        {/* ── Table Footer / Pagination (Standardized with other pages) ── */}
+        <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-600">
+          <div>
+            Menampilkan <strong className="text-slate-800">{filteredItems.length > 0 ? 1 : 0}</strong>-
+            <strong className="text-slate-800">{filteredItems.length}</strong> data dari{' '}
+            <strong className="text-slate-800">{filteredItems.length}</strong> total pengumuman
+            {filterPeriode !== 'semua' && (
+              <span className="ml-1 text-slate-500 font-medium">
+                (Filter: {periodes.find((p) => String(p.id) === filterPeriode)?.nama})
+              </span>
+            )}
+          </div>
+
+          <div className="flex items-center gap-1.5 self-center">
+            <span className="w-8 h-8 rounded-lg bg-[#0E4A3E] text-white flex items-center justify-center font-bold text-xs shadow-xs">
+              1
+            </span>
           </div>
         </div>
-      </div>
-
-      {/* ── Bottom Summary / Pagination Mint Green Card ── */}
-      <div className="bg-[#C0E6D8] border border-[#99d1c1] rounded-2xl px-6 py-4 flex items-center justify-between text-xs text-[#0E4A3E] font-bold shadow-2xs">
-        <div>
-          Menampilkan {filteredItems.length > 0 ? 1 : 0}-{filteredItems.length} data dari {filteredItems.length} data
-          {filterPeriode !== 'semua' && (
-            <span className="ml-1 text-emerald-800">
-              ({periodes.find((p) => String(p.id) === filterPeriode)?.nama || 'Periode Terpilih'})
-            </span>
-          )}
-        </div>
-        <div className="flex items-center gap-1">
-          <span className="w-8 h-8 rounded-lg bg-[#0E4A3E] text-white flex items-center justify-center font-bold text-xs shadow-xs">
-            1
-          </span>
+          </div>
         </div>
       </div>
 
