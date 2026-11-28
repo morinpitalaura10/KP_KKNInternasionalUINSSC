@@ -88,65 +88,66 @@ export default function HasilSeleksiPage() {
         { day: 'numeric', month: 'long', year: 'numeric' }
       );
 
-      // 1. Logo Resmi UINSSC di Kiri Kop Surat (18mm dari kiri, 14mm dari atas, 23x23mm)
+      // 1. Logo Resmi UINSSC di Kiri Kop Surat (18mm dari kiri, 14mm dari atas, 24x24mm)
       if (logoBase64) {
         try {
-          pdf.addImage(logoBase64, 'PNG', 18, 14, 23, 23);
+          pdf.addImage(logoBase64, 'PNG', 18, 14, 24, 24);
         } catch (imgErr) {
           console.warn('Gagal render logo di PDF:', imgErr);
         }
       }
 
-      // 2. Teks Kop Surat Resmi (Diposisikan di tengah area kop samping logo)
-      pdf.setFont('helvetica', 'bold');
-      pdf.setFontSize(10.5);
+      // 2. Teks Kop Surat Resmi Sesuai Format Asli UINSSC (Font Times New Roman)
+      pdf.setFont('times', 'bold');
+      pdf.setFontSize(11);
+      pdf.setTextColor(15, 23, 42);
+      pdf.text('KEMENTERIAN AGAMA REPUBLIK INDONESIA', 118, 17.5, { align: 'center' });
+
+      pdf.setFontSize(11.5);
+      pdf.text('UNIVERSITAS ISLAM NEGERI SIBER SYEKH NURJATI CIREBON', 118, 23, { align: 'center' });
+
+      pdf.setFontSize(11);
+      pdf.text('LEMBAGA PENELITIAN DAN PENGABDIAN MASYARAKAT', 118, 28.5, { align: 'center' });
+
+      pdf.setFont('times', 'normal');
+      pdf.setFontSize(8.5);
       pdf.setTextColor(30, 41, 59);
-      pdf.text('KEMENTERIAN AGAMA REPUBLIK INDONESIA', 116, 19, { align: 'center' });
-
-      pdf.setFontSize(12.5);
-      pdf.setTextColor(14, 74, 62);
-      pdf.text('UNIVERSITAS ISLAM NEGERI SIBER SYEKH NURJATI CIREBON', 116, 25, { align: 'center' });
-
-      pdf.setFontSize(9.5);
-      pdf.setTextColor(30, 41, 59);
-      pdf.text('LEMBAGA PENELITIAN DAN PENGABDIAN KEPADA MASYARAKAT (LP2M)', 116, 30.5, { align: 'center' });
-
-      pdf.setFont('helvetica', 'normal');
+      pdf.text('Alamat: Jl. Perjuangan ByPass Sunyaragi Cirebon 45132', 118, 33, { align: 'center' });
+      pdf.text('Telepon (0231) 481264 Faksimili (0231) 489926', 118, 37, { align: 'center' });
       pdf.setFontSize(8);
-      pdf.setTextColor(71, 85, 105);
-      pdf.text('Jl. Perjuangan By Pass Sunyaragi, Cirebon, Jawa Barat 45132 | Laman: https://uinssc.ac.id', 116, 35.5, { align: 'center' });
+      pdf.text('Website: www.lp2m.uinssc.ac.id Email: lp2m@uinssc.ac.id', 118, 41, { align: 'center' });
 
-      // Garis Ganda Pembatas Kop Surat
-      pdf.setDrawColor(15, 23, 42);
-      pdf.setLineWidth(0.7);
-      pdf.line(18, 40, 192, 40);
-      pdf.setLineWidth(0.2);
-      pdf.line(18, 41.2, 192, 41.2);
+      // Garis Ganda Pembatas Kop Surat (Garis atas tebal, garis bawah tipis)
+      pdf.setDrawColor(0, 0, 0);
+      pdf.setLineWidth(0.85);
+      pdf.line(18, 44, 192, 44);
+      pdf.setLineWidth(0.25);
+      pdf.line(18, 45.3, 192, 45.3);
 
       // 3. Judul Surat Keputusan
-      pdf.setFont('helvetica', 'bold');
+      pdf.setFont('times', 'bold');
       pdf.setFontSize(12);
       pdf.setTextColor(15, 23, 42);
-      pdf.text('SURAT KEPUTUSAN PENETAPAN KELULUSAN PESERTA', 105, 51, { align: 'center' });
+      pdf.text('SURAT KEPUTUSAN PENETAPAN KELULUSAN PESERTA', 105, 54, { align: 'center' });
 
       pdf.setFontSize(10);
-      pdf.text(`PROGRAM KULIAH KERJA NYATA (KKN) INTERNASIONAL TAHUN ${data.tahunPeriode || 2026}`, 105, 56.5, { align: 'center' });
+      pdf.text(`PROGRAM KULIAH KERJA NYATA (KKN) INTERNASIONAL TAHUN ${data.tahunPeriode || 2026}`, 105, 59.5, { align: 'center' });
 
       pdf.setFontSize(9.5);
       pdf.setTextColor(14, 74, 62);
-      pdf.text(`NOMOR: ${skNum}`, 105, 62.5, { align: 'center' });
+      pdf.text(`NOMOR: ${skNum}`, 105, 65.5, { align: 'center' });
 
       // 4. Paragraf Pembuka
-      pdf.setFont('helvetica', 'normal');
+      pdf.setFont('times', 'normal');
       pdf.setFontSize(10);
       pdf.setTextColor(30, 41, 59);
       const intro = `Berdasarkan hasil verifikasi berkas administrasi, evaluasi dokumen akademik, serta penilaian seleksi wawancara dan kompetensi bahasa asing pada penyelenggaraan ${data.namaPeriode || 'KKN Internasional'}, Ketua LP2M UIN Siber Syekh Nurjati Cirebon menetapkan bahwa mahasiswa di bawah ini:`;
-      pdf.text(pdf.splitTextToSize(intro, 174), 18, 73);
+      pdf.text(pdf.splitTextToSize(intro, 174), 18, 76);
 
       // 5. Tabel Identitas & Rincian Kelulusan Mahasiswa
       pdf.setFillColor(248, 250, 252);
       pdf.setDrawColor(203, 213, 225);
-      pdf.roundedRect(18, 88, 174, 58, 3, 3, 'FD');
+      pdf.roundedRect(18, 91, 174, 58, 3, 3, 'FD');
 
       const rows: [string, string][] = [
         ['Nama Lengkap', `: ${(data.nama || '-').toUpperCase()}`],
@@ -161,11 +162,11 @@ export default function HasilSeleksiPage() {
       ];
 
       rows.forEach(([label, val], idx) => {
-        const y = 96 + idx * 8.5;
-        pdf.setFont('helvetica', 'bold');
+        const y = 99 + idx * 8.5;
+        pdf.setFont('times', 'bold');
         pdf.setTextColor(71, 85, 105);
         pdf.text(label, 24, y);
-        pdf.setFont('helvetica', idx === 0 || idx === 5 ? 'bold' : 'normal');
+        pdf.setFont('times', idx === 0 || idx === 5 ? 'bold' : 'normal');
         pdf.setTextColor(idx === 5 ? 14 : 15, idx === 5 ? 74 : 23, idx === 5 ? 62 : 42);
         pdf.text(val, 78, y);
       });
@@ -174,32 +175,31 @@ export default function HasilSeleksiPage() {
       pdf.setFillColor(221, 242, 232);
       pdf.setDrawColor(14, 74, 62);
       pdf.setLineWidth(0.5);
-      pdf.roundedRect(18, 153, 174, 20, 3, 3, 'FD');
-      pdf.setFont('helvetica', 'bold');
+      pdf.roundedRect(18, 156, 174, 20, 3, 3, 'FD');
+      pdf.setFont('times', 'bold');
       pdf.setFontSize(9);
       pdf.setTextColor(14, 74, 62);
-      pdf.text('STATUS KEPUTUSAN AKHIR SELEKSI', 105, 160.5, { align: 'center' });
+      pdf.text('STATUS KEPUTUSAN AKHIR SELEKSI', 105, 163.5, { align: 'center' });
       pdf.setFontSize(12);
-      pdf.text('DINYATAKAN LOLOS SELEKSI UTAMA PESERTA KKN INTERNASIONAL', 105, 168, { align: 'center' });
+      pdf.text('DINYATAKAN LOLOS SELEKSI UTAMA PESERTA KKN INTERNASIONAL', 105, 171, { align: 'center' });
 
       // 7. Paragraf Penutup & Legalitas
-      pdf.setFont('helvetica', 'normal');
+      pdf.setFont('times', 'normal');
       pdf.setFontSize(10);
       pdf.setTextColor(30, 41, 59);
       const outro =
         'Surat Keputusan Penetapan Kelulusan ini berlaku secara sah sebagai bukti kelulusan resmi peserta untuk mengikuti seluruh rangkaian pembekalan (Pre-Departure Training), pengurusan dokumen perjalanan luar negeri, serta pelaksanaan pengabdian masyarakat internasional sesuai jadwal LP2M UIN Siber Syekh Nurjati Cirebon.';
-      pdf.text(pdf.splitTextToSize(outro, 174), 18, 183);
+      pdf.text(pdf.splitTextToSize(outro, 174), 18, 186);
 
       // 8. Bagian Tanda Tangan & Pengesahan Cirebon
       pdf.setFontSize(10);
-      pdf.text(`Ditetapkan di: Cirebon`, 145, 214, { align: 'center' });
-      pdf.text(`Pada tanggal: ${tgl}`, 145, 219.5, { align: 'center' });
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('Ketua LP2M UIN Siber Syekh Nurjati Cirebon', 145, 225.5, { align: 'center' });
-      pdf.text('Prof. Dr. H. Ahmad Dahlan, M.Ag.', 145, 251, { align: 'center' });
-      pdf.setFont('helvetica', 'normal');
-      pdf.setFontSize(9);
-      pdf.text('NIP. 19750812 200212 1 002', 145, 256, { align: 'center' });
+      pdf.text(`Ditetapkan di : Cirebon`, 145, 215, { align: 'center' });
+      pdf.text(`Pada tanggal  : ${tgl}`, 145, 220.5, { align: 'center' });
+      pdf.setFont('times', 'bold');
+      pdf.text('Ketua LP2M,', 145, 227.5, { align: 'center' });
+
+      // Nama Pejabat Ketua LP2M (Sesuai SK Dokumen Resmi)
+      pdf.text('Dr. Faqiuddin Abdul Kodir, MA', 145, 255, { align: 'center' });
 
       pdf.save(fileName);
     } catch (err) {

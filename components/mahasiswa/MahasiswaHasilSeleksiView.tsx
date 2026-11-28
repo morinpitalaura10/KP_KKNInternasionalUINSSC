@@ -278,9 +278,10 @@ export default function MahasiswaHasilSeleksiView({
       {isLolos && (
         <div
           id="printable-sk-kelulusan"
-          className="fixed left-[-9999px] top-0 pointer-events-none print:static print:pointer-events-auto max-w-[210mm] mx-auto bg-white p-8 sm:p-12 border-none print:p-6 print:m-0 print:w-full print:max-w-none text-slate-900 leading-relaxed z-[-1]"
+          style={{ fontFamily: "'Times New Roman', Times, serif" }}
+          className="fixed left-[-9999px] top-0 pointer-events-none print:static print:pointer-events-auto max-w-[210mm] mx-auto bg-white p-8 sm:p-12 border-none print:p-6 print:m-0 print:w-full print:max-w-none text-slate-900 leading-relaxed z-[-1] font-serif"
         >
-          <div className="flex items-center gap-4 pb-4 border-b-2 border-slate-900">
+          <div className="flex items-center gap-4 pb-3">
             <div className="w-20 h-20 sm:w-24 sm:h-24 shrink-0 flex items-center justify-center">
               <img
                 src="/uinssc.png"
@@ -289,23 +290,26 @@ export default function MahasiswaHasilSeleksiView({
               />
             </div>
             <div className="flex-1 text-center pr-2">
-              <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-800 leading-tight">
+              <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-900 leading-tight">
                 KEMENTERIAN AGAMA REPUBLIK INDONESIA
               </h3>
-              <h2 className="text-sm sm:text-base md:text-lg font-black uppercase text-[#0E4A3E] leading-tight">
+              <h2 className="text-sm sm:text-base font-bold uppercase text-slate-900 leading-tight mt-0.5">
                 UNIVERSITAS ISLAM NEGERI SIBER SYEKH NURJATI CIREBON
               </h2>
-              <h4 className="text-xs sm:text-sm font-extrabold uppercase text-slate-800 leading-tight">
-                LEMBAGA PENELITIAN DAN PENGABDIAN KEPADA MASYARAKAT (LP2M)
+              <h4 className="text-xs sm:text-sm font-bold uppercase text-slate-900 leading-tight mt-0.5">
+                LEMBAGA PENELITIAN DAN PENGABDIAN MASYARAKAT
               </h4>
-              <p className="text-[10px] sm:text-[11px] text-slate-600 mt-1 leading-snug">
-                Pusat Pengabdian kepada Masyarakat &amp; Pengelolaan KKN Internasional
+              <p className="text-[10px] sm:text-[11px] text-slate-700 mt-1 leading-tight">
+                Alamat: Jl. Perjuangan ByPass Sunyaragi Cirebon 45132
                 <br />
-                Jl. Perjuangan By Pass Sunyaragi, Cirebon, Jawa Barat 45132 | Laman: https://uinssc.ac.id
+                Telepon (0231) 481264 Faksimili (0231) 489926
+                <br />
+                Website: www.lp2m.uinssc.ac.id Email: lp2m@uinssc.ac.id
               </p>
             </div>
           </div>
-          <div className="h-0.5 bg-slate-900 mt-0.5 mb-6" />
+          <div className="border-b-[2.5px] border-b-black" />
+          <div className="border-b-[0.75px] border-b-black mt-[1.5px] mb-5" />
 
           <div className="text-center mb-6 space-y-1">
             <h2 className="text-sm sm:text-base font-black text-slate-900 uppercase underline tracking-wide">
@@ -411,9 +415,9 @@ export default function MahasiswaHasilSeleksiView({
 
             <div className="flex flex-col items-center justify-between min-h-[130px] relative">
               <div>
-                <p className="text-[11px] text-slate-600">Ditetapkan di: Cirebon</p>
-                <p className="text-[11px] text-slate-600">Pada tanggal: {tanggalCetak}</p>
-                <p className="font-bold mt-1">Ketua LP2M UIN Siber Syekh Nurjati Cirebon</p>
+                <p className="text-[11px] text-slate-700">Ditetapkan di : Cirebon</p>
+                <p className="text-[11px] text-slate-700">Pada tanggal  : {tanggalCetak}</p>
+                <p className="font-bold mt-1 text-slate-900">Ketua LP2M,</p>
               </div>
 
               <div className="relative pt-2">
@@ -421,11 +425,8 @@ export default function MahasiswaHasilSeleksiView({
                   LP2M UINSSC * SK KELULUSAN SAH *
                 </div>
                 <div className="pt-12">
-                  <p className="font-extrabold uppercase underline tracking-wider">
-                    Prof. Dr. H. Ahmad Dahlan, M.Ag.
-                  </p>
-                  <p className="text-[11px] text-slate-500 font-mono">
-                    NIP. 19750812 200212 1 002
+                  <p className="font-bold text-slate-900">
+                    Dr. Faqiuddin Abdul Kodir, MA
                   </p>
                 </div>
               </div>
