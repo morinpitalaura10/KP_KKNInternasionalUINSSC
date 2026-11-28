@@ -21,6 +21,7 @@ export default function KelolaPeriodePage() {
   const [tanggalSelesai, setTanggalSelesai] = useState('');
   const [kuota, setKuota] = useState('10');
   const [status, setStatus] = useState<'Aktif' | 'Belum Aktif' | 'Selesai'>('Aktif');
+  const [ketuaLp2m, setKetuaLp2m] = useState('Dr. Faqiuddin Abdul Kodir, MA');
   const [deskripsi, setDeskripsi] = useState('');
 
   // Delete Confirm Modal State
@@ -85,6 +86,7 @@ export default function KelolaPeriodePage() {
     setTanggalSelesai('');
     setKuota('10');
     setStatus('Aktif');
+    setKetuaLp2m('Dr. Faqiuddin Abdul Kodir, MA');
     setDeskripsi('');
     setIsModalOpen(true);
   };
@@ -99,6 +101,7 @@ export default function KelolaPeriodePage() {
     setTanggalSelesai(toInputDate(item.tanggalSelesai));
     setKuota(item.kuota !== undefined && item.kuota !== null ? String(item.kuota) : '10');
     setStatus((item.status as any) || 'Aktif');
+    setKetuaLp2m(item.ketuaLp2m || item.ketua_lp2m || 'Dr. Faqiuddin Abdul Kodir, MA');
     setDeskripsi(item.deskripsi || '');
     setIsModalOpen(true);
   };
@@ -123,6 +126,7 @@ export default function KelolaPeriodePage() {
       tanggalSelesai,
       kuota: parseInt(kuota, 10) || 10,
       status,
+      ketua_lp2m: ketuaLp2m || 'Dr. Faqiuddin Abdul Kodir, MA',
       deskripsi,
     };
 
@@ -248,6 +252,8 @@ export default function KelolaPeriodePage() {
       setKuota={setKuota}
       status={status}
       setStatus={setStatus}
+      ketuaLp2m={ketuaLp2m}
+      setKetuaLp2m={setKetuaLp2m}
       deskripsi={deskripsi}
       setDeskripsi={setDeskripsi}
       handleOpenCreate={handleOpenCreate}

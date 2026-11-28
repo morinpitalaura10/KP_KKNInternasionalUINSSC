@@ -21,6 +21,8 @@ export interface PeriodeItem {
   kuota?: number | null;
   deskripsi?: string | null;
   status: 'Aktif' | 'Belum Aktif' | 'Selesai' | string;
+  ketuaLp2m?: string | null;
+  ketua_lp2m?: string | null;
 }
 
 export interface AdminPeriodeViewProps {
@@ -48,6 +50,8 @@ export interface AdminPeriodeViewProps {
   setKuota: (val: string) => void;
   status: 'Aktif' | 'Belum Aktif' | 'Selesai';
   setStatus: (val: 'Aktif' | 'Belum Aktif' | 'Selesai') => void;
+  ketuaLp2m: string;
+  setKetuaLp2m: (val: string) => void;
   deskripsi: string;
   setDeskripsi: (val: string) => void;
   handleOpenCreate: () => void;
@@ -87,6 +91,8 @@ export function AdminPeriodeView({
   setKuota,
   status,
   setStatus,
+  ketuaLp2m,
+  setKetuaLp2m,
   deskripsi,
   setDeskripsi,
   handleOpenCreate,
@@ -368,6 +374,24 @@ export function AdminPeriodeView({
                     </p>
                   )}
                 </div>
+              </div>
+
+              {/* Field: Ketua LP2M (Penandatangan SK Kelulusan) */}
+              <div>
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                  Ketua LP2M (Penandatangan SK) *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={ketuaLp2m}
+                  onChange={(e) => setKetuaLp2m(e.target.value)}
+                  placeholder="Contoh: Dr. Faqiuddin Abdul Kodir, MA"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-slate-800 text-xs sm:text-sm font-semibold outline-none focus:border-[#0E4A3E]"
+                />
+                <p className="text-[10px] text-slate-500 font-medium mt-1">
+                  Nama ini akan otomatis tercantum sebagai penandatangan pada Surat Keputusan (SK) Kelulusan mahasiswa.
+                </p>
               </div>
 
               {/* Field 8: Deskripsi / Catatan */}

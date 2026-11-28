@@ -265,6 +265,7 @@ model periode {
   hasil_dipublikasi       Boolean          @default(false)
   tanggal_publikasi_hasil DateTime?        @db.DateTime(0)
   dipublikasi_oleh        Int?
+  ketua_lp2m              String?          @default("Dr. Faqiuddin Abdul Kodir, MA") @db.VarChar(150)
   created_at         DateTime             @default(now()) @db.DateTime(0)
   informasi          Informasi[]
   kriteria_seleksi   kriteria_seleksi[]

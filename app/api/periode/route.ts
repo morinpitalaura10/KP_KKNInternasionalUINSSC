@@ -20,6 +20,8 @@ function mapPeriodeToClient(p: any) {
     tanggalSelesai: p.tanggal_selesai,
     tanggal_selesai: p.tanggal_selesai,
     kuota: p.kuota,
+    ketuaLp2m: p.ketua_lp2m || 'Dr. Faqiuddin Abdul Kodir, MA',
+    ketua_lp2m: p.ketua_lp2m || 'Dr. Faqiuddin Abdul Kodir, MA',
     status: p.status === 'Belum_Aktif' ? 'Belum Aktif' : p.status,
     createdAt: p.created_at,
   };
@@ -49,7 +51,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { nama, nama_periode, tahun, tahunAkademik, tanggalMulai, tanggal_mulai, tanggalSelesai, tanggal_selesai, kuota, status } = body;
+    const { nama, nama_periode, tahun, tahunAkademik, tanggalMulai, tanggal_mulai, tanggalSelesai, tanggal_selesai, kuota, status, ketuaLp2m, ketua_lp2m } = body;
 
     const finalNama = nama || nama_periode;
     const finalTahun = parseInt(String(tahun || tahunAkademik || new Date().getFullYear()), 10);
@@ -82,6 +84,7 @@ export async function POST(req: NextRequest) {
           tanggal_selesai: finalTglSelesai,
           kuota: kuota ? parseInt(String(kuota), 10) : 10,
           status: finalStatus,
+          ketua_lp2m: ketua_lp2m || ketuaLp2m || 'Dr. Faqiuddin Abdul Kodir, MA',
         },
       });
     });
@@ -106,7 +109,7 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   try {
     const body = await req.json();
-    const { id, id_periode, nama, nama_periode, tahun, tahunAkademik, tanggalMulai, tanggal_mulai, tanggalSelesai, tanggal_selesai, kuota, status } = body;
+    const { id, id_periode, nama, nama_periode, tahun, tahunAkademik, tanggalMulai, tanggal_mulai, tanggalSelesai, tanggal_selesai, kuota, status, ketuaLp2m, ketua_lp2m } = body;
 
     const targetId = parseInt(String(id || id_periode), 10);
     if (!targetId || isNaN(targetId)) {
@@ -148,6 +151,7 @@ export async function PUT(req: NextRequest) {
           ...(finalTglSelesai && { tanggal_selesai: finalTglSelesai }),
           ...(kuota !== undefined ? { kuota: parseInt(String(kuota), 10) } : {}),
           ...(finalStatus ? { status: finalStatus } : {}),
+          ...((ketua_lp2m !== undefined || ketuaLp2m !== undefined) ? { ketua_lp2m: (ketua_lp2m || ketuaLp2m || 'Dr. Faqiuddin Abdul Kodir, MA') } : {}),
         },
       });
     });

@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
       orderBy: { created_at: 'desc' },
       include: {
         hasil_seleksi: true,
-        periode: { select: { nama_periode: true, tahun: true } },
+        periode: { select: { nama_periode: true, tahun: true, ketua_lp2m: true } },
         periode_negara: {
           include: { negara: { select: { nama_negara: true, status: true } } },
         },
@@ -95,6 +95,7 @@ export async function GET(req: NextRequest) {
         namaPeriode: pendaftaran.periode?.nama_periode || null,
         tahunPeriode: pendaftaran.periode?.tahun || 2026,
         tanggalPenetapan: hs.tanggal_penetapan ? hs.tanggal_penetapan.toISOString() : null,
+        ketuaLp2m: pendaftaran.periode?.ketua_lp2m || 'Dr. Faqiuddin Abdul Kodir, MA',
       },
     });
   } catch (error) {

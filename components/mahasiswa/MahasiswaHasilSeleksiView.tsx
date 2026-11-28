@@ -34,6 +34,7 @@ export interface HasilSeleksiData {
   namaPeriode: string | null;
   tahunPeriode?: number;
   tanggalPenetapan?: string | null;
+  ketuaLp2m?: string | null;
 }
 
 export interface MahasiswaHasilSeleksiViewProps {
@@ -426,7 +427,7 @@ export default function MahasiswaHasilSeleksiView({
                 </div>
                 <div className="pt-12">
                   <p className="font-bold text-slate-900">
-                    Dr. Faqiuddin Abdul Kodir, MA
+                    {data.ketuaLp2m || 'Dr. Faqiuddin Abdul Kodir, MA'}
                   </p>
                 </div>
               </div>

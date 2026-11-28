@@ -198,8 +198,8 @@ export default function HasilSeleksiPage() {
       pdf.setFont('times', 'bold');
       pdf.text('Ketua LP2M,', 145, 227.5, { align: 'center' });
 
-      // Nama Pejabat Ketua LP2M (Sesuai SK Dokumen Resmi)
-      pdf.text('Dr. Faqiuddin Abdul Kodir, MA', 145, 255, { align: 'center' });
+      // Nama Pejabat Ketua LP2M (Dinamis dari Periode atau Default Resmi)
+      pdf.text(data.ketuaLp2m || 'Dr. Faqiuddin Abdul Kodir, MA', 145, 255, { align: 'center' });
 
       pdf.save(fileName);
     } catch (err) {
