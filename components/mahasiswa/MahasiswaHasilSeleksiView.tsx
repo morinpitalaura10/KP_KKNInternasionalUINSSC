@@ -282,13 +282,10 @@ export default function MahasiswaHasilSeleksiView({
         >
           <div className="flex items-center gap-4 pb-4 border-b-2 border-slate-900">
             <div className="w-20 h-20 sm:w-24 sm:h-24 shrink-0 flex items-center justify-center">
-              <Image
+              <img
                 src="/uinssc.png"
                 alt="Logo UINSSC"
-                width={90}
-                height={90}
-                className="object-contain"
-                priority
+                className="w-20 h-20 sm:w-24 sm:h-24 object-contain"
               />
             </div>
             <div className="flex-1 text-center pr-2">

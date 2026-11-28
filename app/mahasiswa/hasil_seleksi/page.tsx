@@ -56,208 +56,154 @@ export default function HasilSeleksiPage() {
     loadHasil();
   }, []);
 
-  const handleDownloadSkPdf = async () => {
-    if (!showSkPreview) {
-      setShowSkPreview(true);
-      await new Promise((r) => setTimeout(r, 250));
+  const fetchLogoBase64 = async (): Promise<string> => {
+    try {
+      const res = await fetch('/uinssc.png');
+      if (!res.ok) return '';
+      const blob = await res.blob();
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve((reader.result as string) || '');
+        reader.onerror = () => resolve('');
+        reader.readAsDataURL(blob);
+      });
+    } catch {
+      return '';
     }
+  };
 
-    const skEl = document.getElementById('printable-sk-kelulusan');
-    if (!skEl) return;
-
+  const handleDownloadSkPdf = async () => {
     const studentNim = data.nim || 'Peserta';
     const fileName = `SK_Kelulusan_KKN_Internasional_${studentNim}.pdf`;
 
     setIsGeneratingPdf(true);
     try {
-      const html2canvas = (await import('html2canvas')).default;
       const { jsPDF } = await import('jspdf');
+      const logoBase64 = await fetchLogoBase64();
 
-      const colorCanvas = document.createElement('canvas');
-      colorCanvas.width = 1;
-      colorCanvas.height = 1;
-      const colorCtx = colorCanvas.getContext('2d', { willReadFrequently: true });
+      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      const skNum = `B-${String(data.idHasil || data.idPendaftaran || 1).padStart(3, '0')}/In.08/LP2M/KKN-INT/${data.tahunPeriode || 2026}`;
+      const tgl = (data.tanggalPenetapan ? new Date(data.tanggalPenetapan) : new Date()).toLocaleDateString(
+        'id-ID',
+        { day: 'numeric', month: 'long', year: 'numeric' }
+      );
 
-      const toSafeRgb = (val: string | null | undefined, fallback = 'rgb(15, 23, 42)'): string => {
-        if (!val || val === 'transparent' || val === 'none' || val === 'rgba(0, 0, 0, 0)') {
-          return 'transparent';
-        }
-        if (
-          (val.startsWith('rgb(') || val.startsWith('rgba(') || val.startsWith('#')) &&
-          !val.includes('lab') &&
-          !val.includes('oklch') &&
-          !val.includes('oklab') &&
-          !val.includes('lch') &&
-          !val.includes('color(')
-        ) {
-          return val;
-        }
-        if (!colorCtx) return fallback;
+      // 1. Logo Resmi UINSSC di Kiri Kop Surat (18mm dari kiri, 14mm dari atas, 23x23mm)
+      if (logoBase64) {
         try {
-          colorCtx.clearRect(0, 0, 1, 1);
-          colorCtx.fillStyle = '#000000';
-          colorCtx.fillStyle = val;
-          colorCtx.fillRect(0, 0, 1, 1);
-          const [r, g, b, a] = colorCtx.getImageData(0, 0, 1, 1).data;
-          if (a === 0) return 'transparent';
-          if (a < 255) return `rgba(${r}, ${g}, ${b}, ${(a / 255).toFixed(3)})`;
-          return `rgb(${r}, ${g}, ${b})`;
-        } catch {
-          return fallback;
+          pdf.addImage(logoBase64, 'PNG', 18, 14, 23, 23);
+        } catch (imgErr) {
+          console.warn('Gagal render logo di PDF:', imgErr);
         }
-      };
+      }
 
-      const canvas = await html2canvas(skEl, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: '#ffffff',
-        logging: false,
-        onclone: (clonedDoc) => {
-          const allElements = clonedDoc.querySelectorAll('*');
-          allElements.forEach((node) => {
-            const el = node as HTMLElement;
-            if (!el.style) return;
-            const win = clonedDoc.defaultView || window;
-            const comp = win.getComputedStyle(el);
+      // 2. Teks Kop Surat Resmi (Diposisikan di tengah area kop samping logo)
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(10.5);
+      pdf.setTextColor(30, 41, 59);
+      pdf.text('KEMENTERIAN AGAMA REPUBLIK INDONESIA', 116, 19, { align: 'center' });
 
-            el.style.color = toSafeRgb(comp.color, 'rgb(15, 23, 42)');
-            el.style.backgroundColor = toSafeRgb(comp.backgroundColor, 'transparent');
-            el.style.borderTopColor = toSafeRgb(comp.borderTopColor, 'rgb(203, 213, 225)');
-            el.style.borderRightColor = toSafeRgb(comp.borderRightColor, 'rgb(203, 213, 225)');
-            el.style.borderBottomColor = toSafeRgb(comp.borderBottomColor, 'rgb(203, 213, 225)');
-            el.style.borderLeftColor = toSafeRgb(comp.borderLeftColor, 'rgb(203, 213, 225)');
-            el.style.outlineColor = toSafeRgb(comp.outlineColor, 'transparent');
-            el.style.textDecorationColor = toSafeRgb(comp.textDecorationColor, 'rgb(15, 23, 42)');
-            el.style.boxShadow = 'none';
-            if (comp.backgroundImage && comp.backgroundImage !== 'none') {
-              el.style.backgroundImage = 'none';
-            }
-          });
-        },
+      pdf.setFontSize(12.5);
+      pdf.setTextColor(14, 74, 62);
+      pdf.text('UNIVERSITAS ISLAM NEGERI SIBER SYEKH NURJATI CIREBON', 116, 25, { align: 'center' });
+
+      pdf.setFontSize(9.5);
+      pdf.setTextColor(30, 41, 59);
+      pdf.text('LEMBAGA PENELITIAN DAN PENGABDIAN KEPADA MASYARAKAT (LP2M)', 116, 30.5, { align: 'center' });
+
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(8);
+      pdf.setTextColor(71, 85, 105);
+      pdf.text('Jl. Perjuangan By Pass Sunyaragi, Cirebon, Jawa Barat 45132 | Laman: https://uinssc.ac.id', 116, 35.5, { align: 'center' });
+
+      // Garis Ganda Pembatas Kop Surat
+      pdf.setDrawColor(15, 23, 42);
+      pdf.setLineWidth(0.7);
+      pdf.line(18, 40, 192, 40);
+      pdf.setLineWidth(0.2);
+      pdf.line(18, 41.2, 192, 41.2);
+
+      // 3. Judul Surat Keputusan
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(12);
+      pdf.setTextColor(15, 23, 42);
+      pdf.text('SURAT KEPUTUSAN PENETAPAN KELULUSAN PESERTA', 105, 51, { align: 'center' });
+
+      pdf.setFontSize(10);
+      pdf.text(`PROGRAM KULIAH KERJA NYATA (KKN) INTERNASIONAL TAHUN ${data.tahunPeriode || 2026}`, 105, 56.5, { align: 'center' });
+
+      pdf.setFontSize(9.5);
+      pdf.setTextColor(14, 74, 62);
+      pdf.text(`NOMOR: ${skNum}`, 105, 62.5, { align: 'center' });
+
+      // 4. Paragraf Pembuka
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(10);
+      pdf.setTextColor(30, 41, 59);
+      const intro = `Berdasarkan hasil verifikasi berkas administrasi, evaluasi dokumen akademik, serta penilaian seleksi wawancara dan kompetensi bahasa asing pada penyelenggaraan ${data.namaPeriode || 'KKN Internasional'}, Ketua LP2M UIN Siber Syekh Nurjati Cirebon menetapkan bahwa mahasiswa di bawah ini:`;
+      pdf.text(pdf.splitTextToSize(intro, 174), 18, 73);
+
+      // 5. Tabel Identitas & Rincian Kelulusan Mahasiswa
+      pdf.setFillColor(248, 250, 252);
+      pdf.setDrawColor(203, 213, 225);
+      pdf.roundedRect(18, 88, 174, 58, 3, 3, 'FD');
+
+      const rows: [string, string][] = [
+        ['Nama Lengkap', `: ${(data.nama || '-').toUpperCase()}`],
+        ['NIM', `: ${data.nim || '-'}`],
+        ['Fakultas / Program Studi', `: ${data.fakultas || '-'} / ${data.prodi || '-'}`],
+        ['Periode Penyelenggaraan', `: ${data.namaPeriode || 'KKN Internasional'} (${data.tahunPeriode || 2026})`],
+        [
+          'Rincian Skor Evaluasi',
+          `: Berkas ${data.nilaiSubstansi?.toFixed(1) ?? '-'} | Wawancara ${data.nilaiWawancara?.toFixed(1) ?? '-'} | Nilai Akhir ${data.nilaiAkhir?.toFixed(2) ?? '-'} (Peringkat #${data.ranking ?? '-'})`,
+        ],
+        ['Negara Penempatan', `: ${(data.negaraTujuan || 'Ditentukan Panitia LP2M').toUpperCase()}`],
+      ];
+
+      rows.forEach(([label, val], idx) => {
+        const y = 96 + idx * 8.5;
+        pdf.setFont('helvetica', 'bold');
+        pdf.setTextColor(71, 85, 105);
+        pdf.text(label, 24, y);
+        pdf.setFont('helvetica', idx === 0 || idx === 5 ? 'bold' : 'normal');
+        pdf.setTextColor(idx === 5 ? 14 : 15, idx === 5 ? 74 : 23, idx === 5 ? 62 : 42);
+        pdf.text(val, 78, y);
       });
 
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4',
-      });
+      // 6. Kotak Status Keputusan Kelulusan
+      pdf.setFillColor(221, 242, 232);
+      pdf.setDrawColor(14, 74, 62);
+      pdf.setLineWidth(0.5);
+      pdf.roundedRect(18, 153, 174, 20, 3, 3, 'FD');
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(9);
+      pdf.setTextColor(14, 74, 62);
+      pdf.text('STATUS KEPUTUSAN AKHIR SELEKSI', 105, 160.5, { align: 'center' });
+      pdf.setFontSize(12);
+      pdf.text('DINYATAKAN LOLOS SELEKSI UTAMA PESERTA KKN INTERNASIONAL', 105, 168, { align: 'center' });
 
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
-      const margin = 8;
-      const contentWidth = pdfWidth - margin * 2;
-      const contentHeight = (canvas.height * contentWidth) / canvas.width;
+      // 7. Paragraf Penutup & Legalitas
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(10);
+      pdf.setTextColor(30, 41, 59);
+      const outro =
+        'Surat Keputusan Penetapan Kelulusan ini berlaku secara sah sebagai bukti kelulusan resmi peserta untuk mengikuti seluruh rangkaian pembekalan (Pre-Departure Training), pengurusan dokumen perjalanan luar negeri, serta pelaksanaan pengabdian masyarakat internasional sesuai jadwal LP2M UIN Siber Syekh Nurjati Cirebon.';
+      pdf.text(pdf.splitTextToSize(outro, 174), 18, 183);
 
-      const finalHeight = Math.min(contentHeight, pdfHeight - margin * 2);
-      pdf.addImage(imgData, 'PNG', margin, margin, contentWidth, finalHeight);
+      // 8. Bagian Tanda Tangan & Pengesahan Cirebon
+      pdf.setFontSize(10);
+      pdf.text(`Ditetapkan di: Cirebon`, 145, 214, { align: 'center' });
+      pdf.text(`Pada tanggal: ${tgl}`, 145, 219.5, { align: 'center' });
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Ketua LP2M UIN Siber Syekh Nurjati Cirebon', 145, 225.5, { align: 'center' });
+      pdf.text('Prof. Dr. H. Ahmad Dahlan, M.Ag.', 145, 251, { align: 'center' });
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(9);
+      pdf.text('NIP. 19750812 200212 1 002', 145, 256, { align: 'center' });
+
       pdf.save(fileName);
     } catch (err) {
-      console.warn('Merender PDF vektor langsung via jsPDF:', err);
-      try {
-        const { jsPDF } = await import('jspdf');
-        const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-        const skNum = `B-${String(data.idHasil || data.idPendaftaran || 1).padStart(3, '0')}/In.08/LP2M/KKN-INT/${data.tahunPeriode || 2026}`;
-        const tgl = (data.tanggalPenetapan ? new Date(data.tanggalPenetapan) : new Date()).toLocaleDateString(
-          'id-ID',
-          { day: 'numeric', month: 'long', year: 'numeric' }
-        );
-
-        pdf.setFont('helvetica', 'bold');
-        pdf.setFontSize(11);
-        pdf.setTextColor(30, 41, 59);
-        pdf.text('KEMENTERIAN AGAMA REPUBLIK INDONESIA', 105, 20, { align: 'center' });
-        pdf.setFontSize(13);
-        pdf.setTextColor(14, 74, 62);
-        pdf.text('UNIVERSITAS ISLAM NEGERI SIBER SYEKH NURJATI CIREBON', 105, 26, { align: 'center' });
-        pdf.setFontSize(10);
-        pdf.setTextColor(30, 41, 59);
-        pdf.text('LEMBAGA PENELITIAN DAN PENGABDIAN KEPADA MASYARAKAT (LP2M)', 105, 32, { align: 'center' });
-        pdf.setFont('helvetica', 'normal');
-        pdf.setFontSize(8.5);
-        pdf.setTextColor(71, 85, 105);
-        pdf.text('Jl. Perjuangan By Pass Sunyaragi, Cirebon, Jawa Barat 45132 | Laman: https://uinssc.ac.id', 105, 37, { align: 'center' });
-
-        pdf.setDrawColor(15, 23, 42);
-        pdf.setLineWidth(0.7);
-        pdf.line(18, 41, 192, 41);
-        pdf.setLineWidth(0.2);
-        pdf.line(18, 42.2, 192, 42.2);
-
-        pdf.setFont('helvetica', 'bold');
-        pdf.setFontSize(12);
-        pdf.setTextColor(15, 23, 42);
-        pdf.text('SURAT KEPUTUSAN PENETAPAN KELULUSAN PESERTA', 105, 52, { align: 'center' });
-        pdf.setFontSize(10);
-        pdf.text(`PROGRAM KULIAH KERJA NYATA (KKN) INTERNASIONAL TAHUN ${data.tahunPeriode || 2026}`, 105, 57.5, { align: 'center' });
-        pdf.setFontSize(9.5);
-        pdf.setTextColor(14, 74, 62);
-        pdf.text(`NOMOR: ${skNum}`, 105, 63.5, { align: 'center' });
-
-        pdf.setFont('helvetica', 'normal');
-        pdf.setFontSize(10);
-        pdf.setTextColor(30, 41, 59);
-        const intro = `Berdasarkan hasil verifikasi berkas administrasi, evaluasi dokumen akademik, serta penilaian seleksi wawancara dan kompetensi bahasa asing pada penyelenggaraan ${data.namaPeriode || 'KKN Internasional'}, Ketua LP2M UIN Siber Syekh Nurjati Cirebon menetapkan bahwa mahasiswa di bawah ini:`;
-        pdf.text(pdf.splitTextToSize(intro, 174), 18, 74);
-
-        pdf.setFillColor(248, 250, 252);
-        pdf.setDrawColor(203, 213, 225);
-        pdf.roundedRect(18, 90, 174, 58, 3, 3, 'FD');
-
-        const rows: [string, string][] = [
-          ['Nama Lengkap', `: ${(data.nama || '-').toUpperCase()}`],
-          ['NIM', `: ${data.nim || '-'}`],
-          ['Fakultas / Program Studi', `: ${data.fakultas || '-'} / ${data.prodi || '-'}`],
-          ['Periode Penyelenggaraan', `: ${data.namaPeriode || 'KKN Internasional'} (${data.tahunPeriode || 2026})`],
-          [
-            'Rincian Skor Evaluasi',
-            `: Berkas ${data.nilaiSubstansi?.toFixed(1) ?? '-'} | Wawancara ${data.nilaiWawancara?.toFixed(1) ?? '-'} | Nilai Akhir ${data.nilaiAkhir?.toFixed(2) ?? '-'} (Peringkat #${data.ranking ?? '-'})`,
-          ],
-          ['Negara Penempatan', `: ${(data.negaraTujuan || 'Ditentukan Panitia LP2M').toUpperCase()}`],
-        ];
-
-        rows.forEach(([label, val], idx) => {
-          const y = 98 + idx * 8.5;
-          pdf.setFont('helvetica', 'bold');
-          pdf.setTextColor(71, 85, 105);
-          pdf.text(label, 24, y);
-          pdf.setFont('helvetica', idx === 0 || idx === 5 ? 'bold' : 'normal');
-          pdf.setTextColor(idx === 5 ? 14 : 15, idx === 5 ? 74 : 23, idx === 5 ? 62 : 42);
-          pdf.text(val, 78, y);
-        });
-
-        pdf.setFillColor(221, 242, 232);
-        pdf.setDrawColor(14, 74, 62);
-        pdf.setLineWidth(0.5);
-        pdf.roundedRect(18, 155, 174, 20, 3, 3, 'FD');
-        pdf.setFont('helvetica', 'bold');
-        pdf.setFontSize(9);
-        pdf.setTextColor(14, 74, 62);
-        pdf.text('STATUS KEPUTUSAN AKHIR SELEKSI', 105, 162.5, { align: 'center' });
-        pdf.setFontSize(12);
-        pdf.text('DINYATAKAN LOLOS SELEKSI UTAMA PESERTA KKN INTERNASIONAL', 105, 170, { align: 'center' });
-
-        pdf.setFont('helvetica', 'normal');
-        pdf.setFontSize(10);
-        pdf.setTextColor(30, 41, 59);
-        const outro =
-          'Surat Keputusan Penetapan Kelulusan ini berlaku secara sah sebagai bukti kelulusan resmi peserta untuk mengikuti seluruh rangkaian pembekalan (Pre-Departure Training), pengurusan dokumen perjalanan luar negeri, serta pelaksanaan pengabdian masyarakat internasional sesuai jadwal LP2M UIN Siber Syekh Nurjati Cirebon.';
-        pdf.text(pdf.splitTextToSize(outro, 174), 18, 185);
-
-        pdf.setFontSize(10);
-        pdf.text(`Ditetapkan di: Cirebon`, 145, 215, { align: 'center' });
-        pdf.text(`Pada tanggal: ${tgl}`, 145, 220.5, { align: 'center' });
-        pdf.setFont('helvetica', 'bold');
-        pdf.text('Ketua LP2M UIN Siber Syekh Nurjati Cirebon', 145, 226.5, { align: 'center' });
-        pdf.text('Prof. Dr. H. Ahmad Dahlan, M.Ag.', 145, 252, { align: 'center' });
-        pdf.setFont('helvetica', 'normal');
-        pdf.setFontSize(9);
-        pdf.text('NIP. 19750812 200212 1 002', 145, 257, { align: 'center' });
-
-        pdf.save(fileName);
-      } catch (fallbackErr) {
-        console.error('Fallback jsPDF error:', fallbackErr);
-      }
+      console.error('Error generating PDF:', err);
     } finally {
       setIsGeneratingPdf(false);
     }
