@@ -73,12 +73,12 @@ export default function Footer() {
                   <path d="M2 12h20"/>
                 </svg>
                 <a 
-                  href="https://www.lp2m.uinssc.ac.id" 
+                  href="https://lp2m.uinssc.ac.id/" 
                   target="_blank" 
                   rel="noopener noreferrer" 
                   className="hover:underline transition-all"
                 >
-                  www.lp2m.uinssc.ac.id
+                  lp2m.uinssc.ac.id
                 </a>
               </li>
             </ul>
